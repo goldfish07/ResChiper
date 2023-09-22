@@ -73,24 +73,24 @@ configuration:
 ```gradle
 resChiper {
     enableObfuscation = true //by default res obfuscate is enabled
-    obfuscatedBundleName "reschiper-app.aab" // Obfuscated file name, must end with '.aab'
-    mappingFile = file("path/to/your/mapping.txt").toPath() // Mapping file used for incremental obfuscation
+    obfuscatedBundleName = "reschiper-app.aab" // Obfuscated file name, must end with '.aab'
+    //mappingFile = file("path/to/your/mapping.txt").toPath() // Mapping file used for incremental obfuscation
     whiteList = [ // White list rules (resource name to exclude)
-    "*.R.raw.*",
-    "*.R.drawable.ic_launcher"
-    ]  
+                  "*.R.raw.*",
+                  "*.R.drawable.ic_launcher"
+    ]
     mergeDuplicateResources = true // allow the merge of duplicate resources
-    enableFilterFiles = true
+    enableFileFiltering = true
     enableFilterStrings = true
     fileFilterList = [ // file filter rules
-    "META-INF/*",
-    "*/armeabi-v7a/*",
-    "*/arm64-v8a/*",
-    "*/x86/*",
-    "*/x86_64/*"
+                       "META-INF/*",
+                       "*/armeabi-v7a/*",
+                       "*/arm64-v8a/*",
+                       "*/x86/*",
+                       "*/x86_64/*"
     ]
-    unusedStringFile = "path/to/your/unused_strings.txt" , // strings will be filtered in this file
-    localeWhiteList = ["en", "in", "fr"] keep en,en-xx,in,in-xx,fr,fr-xx and remove others locale.
+    unusedStringFile = "path/to/your/unused_strings.txt" // strings will be filtered in this file
+    localeWhiteList = ["en", "in", "fr"] //keep en,en-xx,in,in-xx,fr,fr-xx and remove others locale.
 }
 ```
 
@@ -112,13 +112,13 @@ The ResChiper extension provides various configuration options for resource obfu
 obfuscation, specifying mapping files, white-listing resources, and more.
 
 - `enableObfuscation`: Enable or disable resource obfuscation.<br>
-- `mappingFile`: Path to the ProGuard mapping file (set only when mapping.txt used for obfuscation).<br>
-- `obfuscatedBundleName`: Name of the obfuscated AAB file.<br>
-- `whiteList`: Set of resource names to exclude from obfuscation.<br>
-- `mergeDuplicateResources`: eliminate duplicate resource files and reduce package size.<br>
 - `enableFilterStrings`: Input the unused file splits by lines to support remove strings.<br>
-- `enableFilterFiles`: Support for filtering files in the bundle package. Currently only supports filtering in
+- `enableFileFiltering`: Support for filtering files in the bundle package. Currently only supports filtering in
   the `META-INFO/` and `lib/` paths.<br>
+- `obfuscatedBundleName`: Name of the obfuscated AAB file.<br>
+- `mergeDuplicateResources`: eliminate duplicate resource files and reduce package size.<br>
+- `mappingFile`: Path to the ProGuard mapping file (set only when mapping.txt used for obfuscation).<br>
+- `whiteList`: Set of resource names to exclude from obfuscation.<br>
 - `fileFilterList`: List of file patterns to filter out.<br>
 - `unusedStringFile`: Path to a file containing unused strings.<br>
 - `localeWhiteList`: Set of locales to include in the AAB.
