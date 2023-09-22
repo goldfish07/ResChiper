@@ -1,7 +1,7 @@
 # ResChiper
 
 <h1 align="center">
-  <img src="artifacts/logo.png" alt="failed to load artifacts/logo.png"/>
+  <img src="artifacts/reschiper-banner.png" alt="failed to load artifacts/logo.png"/>
   <p align="center" style="font-size: 0.3em">AAB Resource Obfuscation Tool</p>
 </h1>
 
