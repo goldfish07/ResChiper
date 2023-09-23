@@ -36,7 +36,7 @@ Follow these steps to integrate the AAB Resource Obfuscation Tool into your Andr
 
 Before you begin using ResChiper, ensure that your app meets the following requirements:
 
-- **Java Development Kit (JDK)**: ResChiper requires JDK 19, Make sure your app is configured with JDK 19.
+- **Java Development Kit (JDK)**: ResChiper requires JDK 17, Make sure your app is configured with JDK 17.
 - **Android Gradle Plugin (AGP)**: version 8.0 or later version.
 
 ## Installation
