@@ -69,6 +69,7 @@ public class ResChiperTask extends DefaultTask {
 
         ObfuscateBundleCommand.Builder obfuscateBuilder = ObfuscateBundleCommand.builder()
                 .setEnableObfuscate(resChiperExtension.getEnableObfuscation())
+                .setObfuscationMode(resChiperExtension.getObfuscationMode())
                 .setMergeDuplicatedResources(resChiperExtension.getMergeDuplicateResources())
                 .setWhiteList(resChiperExtension.getWhiteList())
                 .setFilterFile(resChiperExtension.getEnableFileFiltering())

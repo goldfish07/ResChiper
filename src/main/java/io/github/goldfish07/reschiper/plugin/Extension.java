@@ -9,6 +9,7 @@ import java.util.Set;
  */
 public class Extension {
     private boolean enableObfuscation = true;
+    private String obfuscationMode = "default";
     private boolean enableFileFiltering = false;
     private boolean enableFilterStrings = false;
     private boolean mergeDuplicateResources = false;
@@ -35,6 +36,24 @@ public class Extension {
      */
     public void setEnableObfuscation(boolean enableObfuscation) {
         this.enableObfuscation = enableObfuscation;
+    }
+
+    /**
+     * Gets the current resource obfuscation mode.
+     *
+     * @return The resource obfuscation mode as a string.
+     */
+    public String getObfuscationMode() {
+        return obfuscationMode;
+    }
+
+    /**
+     * Sets the resource obfuscation mode.
+     *
+     * @param obfuscationMode The resource obfuscation mode to set as a string.
+     */
+    public void setObfuscationMode(String obfuscationMode) {
+        this.obfuscationMode = obfuscationMode;
     }
 
     /**
@@ -208,6 +227,7 @@ public class Extension {
     public String toString() {
         return "-------------- Extension --------------\n" +
                 "\tenableObfuscation=" + enableObfuscation + "\n" +
+                "\tobfuscationMode=" + obfuscationMode + "\n" +
                 "\tenableFileFiltering=" + enableFileFiltering + "\n" +
                 "\tenableFilterStrings=" + enableFilterStrings + "\n" +
                 "\tmergeDuplicateResources=" + mergeDuplicateResources + "\n" +

@@ -271,6 +271,7 @@ public abstract class Command {
                     mappingPath = bundleCommand.getMappingPath().get();
                 }
                 ResourcesObfuscator obfuscator = new ResourcesObfuscator(getBundlePath(), appBundle, bundleCommand.getWhiteList(), getOutputPath().getParent(), mappingPath);
+                obfuscator.withMode(obfuscator.getMode(bundleCommand.getObfuscationMode()));
                 appBundle = obfuscator.obfuscate();
             }
             // package bundle

@@ -43,6 +43,20 @@ public class ResourcesObfuscator {
     private final ZipFile bundleZipFile;
     private final ResourceMapping resourceMapping;
 
+    public enum MODE {
+        DIR,
+        FILES,
+        DEFAULT
+    }
+
+    public MODE getMode(String mode) {
+        if (Objects.equals(mode, "dir"))
+            return MODE.DIR;
+        else if (Objects.equals(mode, "file"))
+            return MODE.FILES;
+        return MODE.DEFAULT;
+    }
+
     /**
      * Constructs a `ResourcesObfuscator` with the specified parameters.
      *
@@ -70,7 +84,12 @@ public class ResourcesObfuscator {
 
         this.rawAppBundle = rawAppBundle;
         this.whiteListRules = whiteListRules;
+    }
 
+    MODE mode;
+
+    public void withMode(MODE mode) {
+        this.mode = mode;
     }
 
     /**
@@ -166,8 +185,14 @@ public class ResourcesObfuscator {
                 .forEach(path -> {
                     stringObfuscator.reset(null);
                     String name = stringObfuscator.getReplaceString(resourceMapping.getPathMappingNameList());
-                    resourceMapping.putDirMapping(path.toString(), BundleModule.RESOURCES_DIRECTORY + "/" + name);
+                    if (mode == MODE.DIR || mode == MODE.DEFAULT) {
+                        resourceMapping.putDirMapping(path.toString(), BundleModule.RESOURCES_DIRECTORY + "/" + name);
+                    } else {
+                        System.out.println(path + " " + "->" + " " + path);
+                        resourceMapping.putDirMapping(path.toString(), path.toString());
+                    }
                 });
+
         AtomicBoolean whiteListEnabled = new AtomicBoolean(true);
         // generate resource mapping
         ResourcesUtils.entries(table).forEach(entry -> {
@@ -177,7 +202,7 @@ public class ResourcesObfuscator {
             if (obfuscationList == null) {
                 obfuscationList = new HashSet<>();
             }
-            if (whiteListEnabled.get() && shouldBeObfuscated(resourceName)){
+            if (whiteListEnabled.get() && shouldBeObfuscated(resourceName)) {
                 System.out.println("- Found whiteList resources:");
                 whiteListEnabled.set(false);
             }
@@ -230,15 +255,22 @@ public class ResourcesObfuscator {
                         mapping = new HashSet<>();
                     }
 
-                    String bundleRawPath = bundleModule.getName().getName() + "/" + entry.getPath().toString();
+                    //generate resource file mapping
+                    String bundleRawPath = bundleModule.getName().getName() + "/" + entry.getPath().toString(); // bundleRawPath base/res/resource-dir/filename.xml
                     String bundleObfuscatedPath = resourceMapping.getEntryFilesMapping().get(bundleRawPath);
                     if (bundleObfuscatedPath == null) {
                         if (shouldBeObfuscated(bundleRawPath)) {
                             System.out.printf(" Found whiteList resource file, resource: %s%n", bundleRawPath);
                             return;
                         } else {
-                            String fileSuffix = FileOperation.getFileSuffix(entry.getPath());
-                            String obfuscatedName = guardStringBuilder.getReplaceString(mapping);
+                            String fileSuffix, obfuscatedName;
+                            if (mode == MODE.DIR) {
+                                fileSuffix = "";
+                                obfuscatedName = FileOperation.getFileSimpleName(entry.getPath());
+                            } else {
+                                fileSuffix = FileOperation.getFileSuffix(entry.getPath());
+                                obfuscatedName = guardStringBuilder.getReplaceString(mapping);
+                            }
                             mapping.add(obfuscatedName);
                             bundleObfuscatedPath = obfuscateDir + "/" + obfuscatedName + fileSuffix;
                             resourceMapping.putEntryFileMapping(bundleRawPath, bundleObfuscatedPath);
@@ -323,9 +355,9 @@ public class ResourcesObfuscator {
                         if (!configValue.getValue().getItem().hasFile()) {
                             return configValue;
                         }
-                        String rawPath = configValue.getValue().getItem().getFile().getPath();
+                        String rawPath = configValue.getValue().getItem().getFile().getPath(); // rawPath res/resource-directory/filename
                         String bundleRawPath = bundleModule.getName().getName() + "/" + rawPath;
-                        String obfuscatedPath = obfuscatedEntryMap.get(bundleRawPath);
+                        String obfuscatedPath = obfuscatedEntryMap.get(bundleRawPath); //obfuscatedPath res/obfuscated-res-dir/filename.xml
                         if (obfuscatedPath != null) {
                             resourceMapping.addResourcePathAndId(bundleRawPath, resourceId);
                             resourceMapping.putEntryFileMapping(bundleRawPath, obfuscatedPath);

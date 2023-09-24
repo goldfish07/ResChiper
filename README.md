@@ -74,6 +74,7 @@ configuration:
 ```gradle
 resChiper {
     enableObfuscation = true //by default res obfuscate is enabled
+    obfuscationMode = "default" //["dir", "file", "default"]
     obfuscatedBundleName = "reschiper-app.aab" // Obfuscated file name, must end with '.aab'
     //mappingFile = file("path/to/your/mapping.txt").toPath() // Mapping file used for incremental obfuscation
     whiteList = [ // White list rules (resource name to exclude)
@@ -113,6 +114,8 @@ The ResChiper extension provides various configuration options for resource obfu
 obfuscation, specifying mapping files, white-listing resources, and more.
 
 - `enableObfuscation`: Enable or disable resource obfuscation.<br>
+- `obfuscationMode`: to obfuscate only directories set `obfuscationMode = "dir"`, to obfuscate only files set
+  `obfuscationMode = "file"` and to obfuscate both directory and files set `obfuscationMode = "default"`.<br>
 - `enableFilterStrings`: Input the unused file splits by lines to support remove strings.<br>
 - `enableFileFiltering`: Support for filtering files in the bundle package. Currently only supports filtering in
   the `META-INFO/` and `lib/` paths.<br>
@@ -123,6 +126,10 @@ obfuscation, specifying mapping files, white-listing resources, and more.
 - `fileFilterList`: List of file patterns to filter out.<br>
 - `unusedStringFile`: Path to a file containing unused strings.<br>
 - `localeWhiteList`: Set of locales to include in the AAB.
+
+## Example
+
+you can check some configuration example [here](https://github.com/goldfish07/ResChiper/wiki/Example-Configuration-Options) 
 
 ## Output
 

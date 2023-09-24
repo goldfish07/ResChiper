@@ -33,6 +33,13 @@ public abstract class ObfuscateBundleCommand {
     public abstract Boolean getEnableObfuscate();
 
     /**
+     * Get the resource obfuscation mode.
+     *
+     * @return A resource obfuscation mode, Mode are [dir, file, default].
+     */
+    public abstract String getObfuscationMode();
+
+    /**
      * Get an optional path to the obfuscation mapping file.
      *
      * @return An optional path to the obfuscation mapping file.
@@ -108,6 +115,14 @@ public abstract class ObfuscateBundleCommand {
          * @return This builder instance for method chaining.
          */
         public abstract Builder setEnableObfuscate(Boolean enable);
+
+        /**
+         * Set the resource obfuscation mode.
+         *
+         * @param mode flag indicating to toggle resource obfuscation mode [dir, file, default].
+         * @return This builder instance for method chaining.
+         */
+        public abstract Builder setObfuscationMode(String mode);
 
         /**
          * Set the set of white-listed resources that should not be obfuscated.
