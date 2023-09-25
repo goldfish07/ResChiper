@@ -9,7 +9,7 @@
 [![BundleTool](https://img.shields.io/badge/Dependency-Bundletool/1.0.0-red)](https://github.com/google/bundletool)
 ![JDK Version](https://img.shields.io/badge/JDK-17-blue)
 ![Gradle Version](https://img.shields.io/badge/Gradle-8.0-darkgreen)
-[![ResChiper Version](https://img.shields.io/badge/release-0.1.0--rc-%23C6782A.svg?style=flat)](https://github.com/goldfish07/ResChiper/releases/tag/0.1.0-rc1)
+[![ResChiper Version](https://img.shields.io/badge/release-0.1.0--rc1-%23C6782A.svg?style=flat)](https://github.com/goldfish07/ResChiper/releases/tag/0.1.0-rc1)
 
 ## Table of Contents
 
@@ -48,7 +48,7 @@ In your project's root-level `build.gradle` file, add the ResChiper Gradle plugi
 ```gradle
 buildscript {
   dependencies {
-    classpath "io.github.goldfish07.reschiper:plugin:<latest_version>"
+    classpath "io.github.goldfish07.reschiper:plugin:0.1.0-rc1"
   }
   
   repositories {
