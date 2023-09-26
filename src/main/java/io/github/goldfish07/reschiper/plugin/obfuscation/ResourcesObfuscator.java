@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -185,15 +184,15 @@ public class ResourcesObfuscator {
                 .forEach(path -> {
                     stringObfuscator.reset(null);
                     String name = stringObfuscator.getReplaceString(resourceMapping.getPathMappingNameList());
-                    if (mode == MODE.DIR || mode == MODE.DEFAULT) {
-                        resourceMapping.putDirMapping(path.toString(), BundleModule.RESOURCES_DIRECTORY + "/" + name);
-                    } else {
-                        System.out.println(path + " " + "->" + " " + path);
+                    if (mode == MODE.FILES || isDirectoryInWhiteList(path.toString())) {
+                        if (isDirectoryInWhiteList(path.toString()))
+                            System.out.println(" - [whitelist][dir] " + path);
                         resourceMapping.putDirMapping(path.toString(), path.toString());
+                    } else {
+                        resourceMapping.putDirMapping(path.toString(), BundleModule.RESOURCES_DIRECTORY + "/" + name);
                     }
                 });
 
-        AtomicBoolean whiteListEnabled = new AtomicBoolean(true);
         // generate resource mapping
         ResourcesUtils.entries(table).forEach(entry -> {
             String resourceId = entry.getResourceId().toString();
@@ -202,14 +201,10 @@ public class ResourcesObfuscator {
             if (obfuscationList == null) {
                 obfuscationList = new HashSet<>();
             }
-            if (whiteListEnabled.get() && shouldBeObfuscated(resourceName)) {
-                System.out.println("- Found whiteList resources:");
-                whiteListEnabled.set(false);
-            }
 
             stringObfuscator.reset(null);
             if (resourceMapping.getResourceMapping().containsKey(resourceName)) {
-                if (shouldBeObfuscated(resourceName)) {
+                if (isResourceInWhiteList(resourceName)) {
                     System.out.printf(" removing from mapping: %s, id: %s%n", resourceName, resourceId);
                     resourceMapping.getResourceMapping().remove(resourceName);
                 } else {
@@ -217,8 +212,8 @@ public class ResourcesObfuscator {
                     obfuscationList.add(AppBundleUtils.getEntryNameByResourceName(obfuscateResourceName));
                 }
             } else {
-                if (shouldBeObfuscated(resourceName)) {
-                    System.out.printf(" - %s, id: %s%n", resourceName, resourceId);
+                if (isResourceInWhiteList(resourceName)) {
+                    System.out.printf(" - [whitelist][resource] %s, id: %s%n", resourceName, resourceId);
                 } else {
                     String name = stringObfuscator.getReplaceString(obfuscationList);
                     obfuscationList.add(name);
@@ -246,7 +241,7 @@ public class ResourcesObfuscator {
                 .forEach(entry -> {
                     guardStringBuilder.reset(null);
                     String entryDir = entry.getPath().getParent().toString();
-                    String obfuscateDir = resourceMapping.getDirMapping().get(entryDir);
+                    String obfuscateDir = resourceMapping.getDirMapping().get(entryDir); //obfuscateDir eg: res/raw -> res/a_
                     if (obfuscateDir == null) {
                         throw new RuntimeException(String.format("can not find resource directory: %s", entryDir));
                     }
@@ -259,17 +254,23 @@ public class ResourcesObfuscator {
                     String bundleRawPath = bundleModule.getName().getName() + "/" + entry.getPath().toString(); // bundleRawPath base/res/resource-dir/filename.xml
                     String bundleObfuscatedPath = resourceMapping.getEntryFilesMapping().get(bundleRawPath);
                     if (bundleObfuscatedPath == null) {
-                        if (shouldBeObfuscated(bundleRawPath)) {
+                        if (isResourceInWhiteList(bundleRawPath)) {
                             System.out.printf(" Found whiteList resource file, resource: %s%n", bundleRawPath);
                             return;
                         } else {
                             String fileSuffix, obfuscatedName;
-                            if (mode == MODE.DIR) {
+                            if (isFileInWhiteList(entry.getPath().toString())) {
                                 fileSuffix = "";
                                 obfuscatedName = FileOperation.getFileSimpleName(entry.getPath());
+                                System.out.println(" - [whitelist][file] " + entry.getPath().toString());
                             } else {
-                                fileSuffix = FileOperation.getFileSuffix(entry.getPath());
-                                obfuscatedName = guardStringBuilder.getReplaceString(mapping);
+                                if ((mode == MODE.FILES || mode == MODE.DEFAULT)) {
+                                    fileSuffix = FileOperation.getFileSuffix(entry.getPath());
+                                    obfuscatedName = guardStringBuilder.getReplaceString(mapping);
+                                } else {
+                                    fileSuffix = "";
+                                    obfuscatedName = FileOperation.getFileSimpleName(entry.getPath());
+                                }
                             }
                             mapping.add(obfuscatedName);
                             bundleObfuscatedPath = obfuscateDir + "/" + obfuscatedName + fileSuffix;
@@ -394,12 +395,12 @@ public class ResourcesObfuscator {
     }
 
     /**
-     * Checks whether a resource should be obfuscated based on whitelist rules.
+     * Checks whether a resource is in the whitelist based on specified rules.
      *
      * @param resourceName The name of the resource to check.
-     * @return `true` if the resource should be obfuscated, `false` if it should be whitelisted.
+     * @return `true` if the resource is in the whitelist, `false` otherwise.
      */
-    private boolean shouldBeObfuscated(@NotNull String resourceName) {
+    private boolean isResourceInWhiteList(@NotNull String resourceName) {
         // android system resources should not be obfuscated
         if (resourceName.startsWith(RESOURCE_ANDROID_PREFIX)) {
             return true;
@@ -408,6 +409,43 @@ public class ResourcesObfuscator {
             Pattern filterPattern = Pattern.compile(Utils.convertToPatternString(rule));
             if (filterPattern.matcher(resourceName).matches()) {
                 return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if a directory path is in the whitelist based on specified rules.
+     *
+     * @param dir The directory path to check. dir: res/resource-dir eg: res/raw
+     * @return `true` if the directory is in the whitelist, `false` otherwise.
+     */
+    private boolean isDirectoryInWhiteList(@NotNull String dir) {
+        for (String rule : whiteListRules) {
+            if (dir.startsWith(BundleModule.RESOURCES_DIRECTORY + "/") && rule.equals(dir)) // only take res/resource-dir eg: res/raw
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * Checks if a file entry is in the whitelist based on specified rules.
+     *
+     * @param entry The file entry to check. entry: res/resource-dir/file eg: res/raw/success_tick.json
+     * @return `true` if the file entry is in the whitelist, `false` otherwise.
+     */
+    private boolean isFileInWhiteList(@NotNull String entry) {
+        String filename = new File(entry).getName(); // filename: filename.{extension} eg: success_tick.json
+        String dir = entry.replace("/" + filename, "");
+        for (String rule : whiteListRules) {
+            if (rule.endsWith("/*")) {
+                String ruleWithoutWildcard = rule.substring(0, rule.length() - 2); // Remove "/*" from the rule
+                if (dir.startsWith(BundleModule.RESOURCES_DIRECTORY + "/") && dir.equals(ruleWithoutWildcard)) {
+                    return true;
+                }
+            } else {
+                if (entry.startsWith(BundleModule.RESOURCES_DIRECTORY + "/") && rule.equals(entry)) //entry: res/resource-dir/filename.{extension} eg: res/raw/success_tick.json
+                    return true;
             }
         }
         return false;

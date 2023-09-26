@@ -19,6 +19,8 @@
     - [Installation](#installation)
     - [Usage](#usage)
 - [Configuration Options](#configuration-options)
+- [Example](#example)
+- [WhiteList](#whitelist)
 - [Output](#output)
 - [Acknowledgments](#acknowledgments)
 - [License](#license)
@@ -77,9 +79,30 @@ resChiper {
     obfuscationMode = "default" //["dir", "file", "default"]
     obfuscatedBundleName = "reschiper-app.aab" // Obfuscated file name, must end with '.aab'
     //mappingFile = file("path/to/your/mapping.txt").toPath() // Mapping file used for incremental obfuscation
-    whiteList = [ // White list rules (resource name to exclude)
-                  "*.R.raw.*",
-                  "*.R.drawable.ic_launcher"
+    whiteList = [  
+                 //Whitelist rule (directory name to exclude)
+                 "res/raw", // raw dir will not be obfuscated
+                 "res/xml", // xml dir will not be obfuscated
+                  
+                 //Whitelist rule (file name to exclude)
+                 "res/raw/*", // all files inside raw directory will not be obfuscated      
+                 "res/raw/success_tick.json" // success_tick.json file will not be obfuscated
+                 "res/xml/*", // all files inside xml directory will not be obfuscated
+                  
+                 // White list rules (resource name to exclude)
+                 "*.R.raw.*",
+                 "*.R.xml.*",
+                 
+                 //for google services
+                 "R.string.google_api_key",
+                 "*.R.string.google_app_id",
+                 "*.R.string.default_web_client_id",
+                 "*.R.string.gcm_defaultSenderId",
+                 "*.R.string.ga_trackingId",
+                 "*.R.string.firebase_database_url",
+                 "*.R.string.google_crash_reporting_api_key",
+                 "*.R.string.google_storage_bucket",
+                 "*.R.integer.google_play_services_version"
     ]
     mergeDuplicateResources = true // allow the merge of duplicate resources
     enableFileFiltering = true
@@ -130,6 +153,11 @@ obfuscation, specifying mapping files, white-listing resources, and more.
 ## Example
 
 you can check some configuration example [here](https://github.com/goldfish07/ResChiper/wiki/Example-Configuration-Options) 
+
+## WhiteList
+
+resources that are not obfuscated during the build process.<br>
+you can find whitsList configs [here](https://github.com/goldfish07/ResChiper/wiki/WhiteList).
 
 ## Output
 
