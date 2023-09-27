@@ -1,13 +1,5 @@
 package io.github.goldfish07.reschiper.plugin;
 
-import com.android.tools.build.bundletool.flags.FlagParser;
-import com.android.tools.build.bundletool.flags.ParsedFlags;
-import com.android.tools.build.bundletool.model.version.Version;
-import com.google.common.collect.ImmutableList;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Optional;
-
 /**
  * Main class for the ResChiper command-line tool.
  */

@@ -44,31 +44,24 @@ public class StringObfuscator {
         isReplaced.clear();
         isWhiteList.clear();
 
-        for (String str : A_TO_Z) {
-            if (Utils.match(str, blacklistPatterns)) {
+        for (String str : A_TO_Z)
+            if (Utils.match(str, blacklistPatterns))
                 replaceStringBuffer.add(str);
-            }
-        }
 
-        for (String first : A_TO_Z) {
+        for (String first : A_TO_Z)
             for (String aMAToAll : A_TO_ALL) {
                 String str = first + aMAToAll;
-                if (Utils.match(str, blacklistPatterns)) {
+                if (Utils.match(str, blacklistPatterns))
                     replaceStringBuffer.add(str);
-                }
             }
-        }
 
-        for (String first : A_TO_Z) {
-            for (String second : A_TO_ALL) {
+        for (String first : A_TO_Z)
+            for (String second : A_TO_ALL)
                 for (String third : A_TO_ALL) {
                     String str = first + second + third;
-                    if (!FILE_NAME_BLACKLIST.contains(str) && Utils.match(str, blacklistPatterns)) {
+                    if (!FILE_NAME_BLACKLIST.contains(str) && Utils.match(str, blacklistPatterns))
                         replaceStringBuffer.add(str);
-                    }
                 }
-            }
-        }
     }
 
     /**
@@ -77,7 +70,8 @@ public class StringObfuscator {
      * @param collection The collection of strings to remove.
      */
     public void removeStrings(Collection<String> collection) {
-        if (collection == null) return;
+        if (collection == null)
+            return;
         replaceStringBuffer.removeAll(collection);
     }
 
@@ -127,20 +121,15 @@ public class StringObfuscator {
      * @throws IllegalArgumentException If the replacement buffer is empty.
      */
     public String getReplaceString(Collection<String> names) throws IllegalArgumentException {
-        if (replaceStringBuffer.isEmpty()) {
+        if (replaceStringBuffer.isEmpty())
             throw new IllegalArgumentException("Now can only obfuscate up to " + MAX_OBFUSCATION_LIMIT + " in a single type");
-        }
-
-        if (names != null) {
+        if (names != null)
             for (int i = 0; i < replaceStringBuffer.size(); i++) {
                 String name = replaceStringBuffer.get(i);
-                if (names.contains(name)) {
+                if (names.contains(name))
                     continue;
-                }
                 return replaceStringBuffer.remove(i);
             }
-        }
-
         return replaceStringBuffer.remove(0);
     }
 }

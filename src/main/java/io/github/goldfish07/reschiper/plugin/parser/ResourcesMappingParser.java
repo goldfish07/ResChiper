@@ -39,7 +39,6 @@ public class ResourcesMappingParser {
      */
     public ResourceMapping parse() throws IOException {
         ResourceMapping mapping = new ResourceMapping();
-
         FileReader fr = new FileReader(mappingPath.toFile());
         BufferedReader br = new BufferedReader(fr);
         String line = br.readLine();
@@ -54,9 +53,8 @@ public class ResourcesMappingParser {
                 if (mat.find()) {
                     String rawName = mat.group(1).trim();
                     String obfuscateName = mat.group(2).trim();
-                    if (!line.contains("/") || line.contains(".")) {
+                    if (!line.contains("/") || line.contains("."))
                         throw new IllegalArgumentException("Unexpected resource dir: " + line);
-                    }
                     mapping.putDirMapping(rawName, obfuscateName);
                 }
             } else {
@@ -64,23 +62,19 @@ public class ResourcesMappingParser {
                 if (mat.find()) {
                     String rawName = mat.group(2).trim();
                     String obfuscateName = mat.group(3).trim();
-                    if (line.contains("/")) {
+                    if (line.contains("/"))
                         mapping.putEntryFileMapping(rawName, obfuscateName);
-                    } else {
+                    else {
                         int packagePos = rawName.indexOf(".R.");
-                        if (packagePos == -1) {
+                        if (packagePos == -1)
                             throw new IllegalArgumentException(String.format("the mapping file packageName is malformed, "
-                                            + "it should be like com.github.goldfish07.ugc.R.attr.test, yours %s\n",
-                                    rawName
-                            ));
-                        }
+                                            + "it should be like com.github.goldfish07.ugc.R.attr.test, yours %s\n", rawName));
                         mapping.putResourceMapping(rawName, obfuscateName);
                     }
                 }
             }
             line = br.readLine();
         }
-
         br.close();
         fr.close();
         return mapping;

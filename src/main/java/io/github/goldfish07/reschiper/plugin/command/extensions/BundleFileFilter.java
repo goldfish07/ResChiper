@@ -40,7 +40,6 @@ public class BundleFileFilter {
     private final ZipFile bundleZipFile;
     private final AppBundle rawAppBundle;
     private final Set<String> filterRules;
-
     private int filterTotalSize = 0;
     private int filterTotalCount = 0;
 
@@ -56,9 +55,8 @@ public class BundleFileFilter {
         checkFileExistsAndReadable(bundlePath);
         this.bundleZipFile = new ZipFile(bundlePath.toFile());
         this.rawAppBundle = rawAppBundle;
-        if (filterRules == null) {
+        if (filterRules == null)
             filterRules = new HashSet<>();
-        }
         this.filterRules = filterRules;
         filterRules.addAll(FILE_SIGN);
     }
@@ -76,14 +74,14 @@ public class BundleFileFilter {
         TimeClock timeClock = new TimeClock();
         // filter bundle module file
         Map<BundleModuleName, BundleModule> bundleModules = new HashMap<>();
-        for (Map.Entry<BundleModuleName, BundleModule> entry : rawAppBundle.getModules().entrySet()) {
+        for (Map.Entry<BundleModuleName, BundleModule> entry : rawAppBundle.getModules().entrySet())
             bundleModules.put(entry.getKey(), filterBundleModule(entry.getValue()));
-        }
         AppBundle appBundle = rawAppBundle.toBuilder()
                 .setBundleMetadata(filterMetaData())
                 .setModules(ImmutableMap.copyOf(bundleModules))
                 .build();
-        System.out.printf("""
+        System.out.printf(
+                """
                  \n Filtering completed in %s
                 -----------------------------------------
                  Reduced file count: %s
@@ -121,9 +119,8 @@ public class BundleFileFilter {
         filterTotalCount += filteredModuleEntries.size();
         // update pb
         Files.NativeLibraries nativeLibraries = updateLibDirectory(bundleModule, filteredModuleEntries);
-        if (nativeLibraries != null) {
+        if (nativeLibraries != null)
             builder.setNativeConfig(nativeLibraries);
-        }
         return builder.build();
     }
 
@@ -140,14 +137,10 @@ public class BundleFileFilter {
                 .filter(entry -> entry.getPath().startsWith(BundleModule.LIB_DIRECTORY))
                 .toList();
         Files.NativeLibraries nativeLibraries = bundleModule.getNativeConfig().orElse(null);
-        if (libEntries.isEmpty()) {
+        if (libEntries.isEmpty())
             return nativeLibraries;
-        }
-
-        if (nativeLibraries == null) {
+        if (nativeLibraries == null)
             throw new UnexpectedException(String.format("can not find nativeLibraries file `native.pb` in %s module", bundleModule.getName().getName()));
-        }
-
         Files.NativeLibraries filteredNativeLibraries = nativeLibraries;
         for (Files.TargetedNativeDirectory directory : nativeLibraries.getDirectoryList()) {
             int directoryNativeSize = libEntries.stream()
@@ -157,9 +150,8 @@ public class BundleFileFilter {
                 int moduleNativeSize = bundleModule.getEntries().stream()
                         .filter(entry -> entry.getPath().startsWith(directory.getPath()))
                         .toList().size();
-                if (directoryNativeSize == moduleNativeSize) {
+                if (directoryNativeSize == moduleNativeSize)
                     filteredNativeLibraries = NativeLibrariesOperation.removeDirectory(filteredNativeLibraries, directory.getPath());
-                }
             }
         }
         return filteredNativeLibraries;
@@ -185,8 +177,7 @@ public class BundleFileFilter {
                         return false;
                     }
                     return true;
-                })
-                .forEach(entry -> builder.addFile(entry.getKey(), entry.getValue()));
+                }).forEach(entry -> builder.addFile(entry.getKey(), entry.getValue()));
         return builder.build();
     }
 
@@ -197,10 +188,8 @@ public class BundleFileFilter {
      * @param filterRule The filter rule applied to the entry.
      */
     private void checkFilteredEntry(@org.jetbrains.annotations.NotNull ModuleEntry entry, String filterRule) {
-        if (!entry.getPath().startsWith(BundleModule.LIB_DIRECTORY) &&
-            !entry.getPath().startsWith(METADATA_DIRECTORY.toString())) {
+        if (!entry.getPath().startsWith(BundleModule.LIB_DIRECTORY) && !entry.getPath().startsWith(METADATA_DIRECTORY.toString()))
             throw new UnsupportedOperationException(String.format("%s entry can not be filtered, please check the filter rule [%s].", entry.getPath(), filterRule));
-        }
     }
 
     /**
@@ -212,9 +201,8 @@ public class BundleFileFilter {
     private @Nullable String getMatchedFilterRule(ZipPath zipPath) {
         for (String rule : filterRules) {
             Pattern filterPattern = Pattern.compile(Utils.convertToPatternString(rule));
-            if (filterPattern.matcher(zipPath.toString()).matches()) {
+            if (filterPattern.matcher(zipPath.toString()).matches())
                 return rule;
-            }
         }
         return null;
     }

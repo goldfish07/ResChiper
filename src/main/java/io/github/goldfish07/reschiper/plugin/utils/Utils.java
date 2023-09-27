@@ -35,12 +35,12 @@ public class Utils {
     }
 
     public static boolean match(String str, HashSet<Pattern> patterns) {
-        if (patterns == null) {
+        if (patterns == null)
             return true;
-        }
         for (Pattern p : patterns) {
             boolean isMatch = p.matcher(str).matches();
-            if (isMatch) return false;
+            if (isMatch)
+                return false;
         }
         return true;
     }
@@ -56,9 +56,8 @@ public class Utils {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         byte[] buffer = new byte[4096];
         int length;
-        while ((length = inputStream.read(buffer)) != -1) {
+        while ((length = inputStream.read(buffer)) != -1)
             result.write(buffer, 0, length);
-        }
         return result.toString(StandardCharsets.UTF_8);
     }
 
@@ -74,9 +73,8 @@ public class Utils {
                 throw new RuntimeException(readInputStream(process.getErrorStream()));
             }
         } finally {
-            if (process != null) {
+            if (process != null)
                 process.destroy();
-            }
         }
         return output;
     }
@@ -93,9 +91,8 @@ public class Utils {
                 throw new RuntimeException(readInputStream(process.getErrorStream()));
             }
         } finally {
-            if (process != null) {
+            if (process != null)
                 process.destroy();
-            }
         }
         return output;
     }
@@ -113,25 +110,19 @@ public class Utils {
         //validateParams(text, searchList, replacementList);
 
         SearchTracker tracker = new SearchTracker(text, searchList, replacementList);
-        if (!tracker.hasNextMatch(0)) {
+        if (!tracker.hasNextMatch(0))
             return text;
-        }
-
         StringBuilder buf = new StringBuilder(text.length() * 2);
         int start = 0;
-
         do {
             SearchTracker.MatchInfo matchInfo = tracker.matchInfo;
             int textIndex = matchInfo.textIndex;
             String pattern = matchInfo.pattern;
             String replacement = matchInfo.replacement;
-
             buf.append(text, start, textIndex);
             buf.append(replacement);
-
             start = textIndex + pattern.length();
         } while (tracker.hasNextMatch(start));
-
         return buf.append(text.substring(start)).toString();
     }
 
@@ -153,19 +144,17 @@ public class Utils {
         boolean hasNextMatch(int start) {
             int textIndex = -1;
             String nextPattern = null;
-
             for (String pattern : new ArrayList<>(pendingPatterns)) {
                 int matchIndex = text.indexOf(pattern, start);
-                if (matchIndex == -1) {
+                if (matchIndex == -1)
                     pendingPatterns.remove(pattern);
-                } else {
+                else {
                     if (textIndex == -1 || matchIndex < textIndex) {
                         textIndex = matchIndex;
                         nextPattern = pattern;
                     }
                 }
             }
-
             if (nextPattern != null) {
                 matchInfo = new MatchInfo(nextPattern, patternToReplacement.get(nextPattern), textIndex);
                 return true;

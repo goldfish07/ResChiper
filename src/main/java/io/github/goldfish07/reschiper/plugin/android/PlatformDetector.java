@@ -36,14 +36,12 @@ public class PlatformDetector {
      */
     public static int currentPlatform() {
         String os = System.getProperty("os.name");
-        if (os.startsWith("Mac OS")) {
+        if (os.startsWith("Mac OS"))
             return PLATFORM_DARWIN;
-        } else if (os.startsWith("Windows")) {
+        else if (os.startsWith("Windows"))
             return PLATFORM_WINDOWS;
-        } else if (os.startsWith("Linux")) {
+        else if (os.startsWith("Linux"))
             return PLATFORM_LINUX;
-        }
-
         return PLATFORM_UNKNOWN;
     }
 }

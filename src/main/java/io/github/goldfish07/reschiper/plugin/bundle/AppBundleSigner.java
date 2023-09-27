@@ -50,15 +50,14 @@ public class AppBundleSigner {
      * @throws InterruptedException If the signing process is interrupted.
      */
     public void execute() throws IOException, InterruptedException {
-        if (bundleSignature == null) {
+        if (bundleSignature == null)
             return;
-        }
-        System.out.println("""
+        System.out.println(
+                """
                 ----------------------------------------
                  Signing:
                 ----------------------------------------
                 - Signing the bundle...""");
-
         TimeClock timeClock = new TimeClock();
         JarSigner.Signature signature = new JarSigner.Signature(
                 bundleSignature.storeFile(),

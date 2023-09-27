@@ -21,21 +21,16 @@ public class TimeClock {
      */
     public String getElapsedTime() {
         long elapsedTimeMillis = System.currentTimeMillis() - startTime;
-
         if (elapsedTimeMillis >= 60000) {
             long elapsedMinutes = elapsedTimeMillis / 60000;
             long remainingSeconds = (elapsedTimeMillis % 60000) / 1000;
-
-            if (remainingSeconds > 0) {
+            if (remainingSeconds > 0)
                 return elapsedMinutes + "min " + remainingSeconds + "s";
-            } else {
+            else
                 return elapsedMinutes + "min";
-            }
-        } else if (elapsedTimeMillis >= 1000) {
-            long elapsedSeconds = elapsedTimeMillis / 1000;
-            return elapsedSeconds + "s";
-        } else {
+        } else if (elapsedTimeMillis >= 1000)
+            return elapsedTimeMillis / 1000 + "s";
+        else
             return elapsedTimeMillis + "ms";
-        }
     }
 }

@@ -23,9 +23,8 @@ public class AndroidDebugKeyStoreHelper {
      */
     public static @Nullable JarSigner.Signature debugSigningConfig() {
         String debugKeystoreLocation = defaultDebugKeystoreLocation();
-        if (debugKeystoreLocation == null || !new File(debugKeystoreLocation).exists()) {
+        if (debugKeystoreLocation == null || !new File(debugKeystoreLocation).exists())
             return null;
-        }
         return new JarSigner.Signature(
                 Path.of(debugKeystoreLocation),
                 DEFAULT_PASSWORD,

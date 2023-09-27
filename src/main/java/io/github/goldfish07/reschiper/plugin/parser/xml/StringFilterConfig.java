@@ -65,9 +65,9 @@ public class StringFilterConfig {
     @Override
     public String toString() {
         return "StringFilterConfig{" +
-               "isActive=" + isActive +
-               ", path='" + path + '\'' +
-               ", languageWhiteList=" + languageWhiteList +
-               '}';
+                "isActive=" + isActive +
+                ", path='" + path + '\'' +
+                ", languageWhiteList=" + languageWhiteList +
+                '}';
     }
 }

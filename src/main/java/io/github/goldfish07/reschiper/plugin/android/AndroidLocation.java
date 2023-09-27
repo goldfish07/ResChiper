@@ -35,10 +35,9 @@ public class AndroidLocation {
         if (sPrefsLocation == null) {
             sPrefsLocation = findHomeFolder();
         }
-
         // Ensure the folder exists
         File f = new File(sPrefsLocation);
-        if (!f.exists()) {
+        if (!f.exists())
             try {
                 f.mkdirs();
             } catch (SecurityException e) {
@@ -49,10 +48,9 @@ public class AndroidLocation {
                 ale.initCause(e);
                 throw ale;
             }
-        } else if (f.isFile()) {
+        else if (f.isFile())
             throw new AndroidLocationException(String.format("%1$s is not a directory!\n" +
                     "This is the path of the preference folder expected by the Android tools.", sPrefsLocation));
-        }
         return sPrefsLocation;
     }
 
@@ -74,7 +72,7 @@ public class AndroidLocation {
     }
 
     /**
-     * Check the if ANDROID_SDK_HOME variable points to an SDK.
+     * Check if ANDROID_SDK_HOME variable points to an SDK.
      *
      * @throws AndroidLocationException If ANDROID_SDK_HOME is not correctly set.
      */
@@ -90,14 +88,9 @@ public class AndroidLocation {
      */
     public static String getAvdFolder() throws AndroidLocationException {
         if (sAvdLocation == null) {
-            String home = findValidPath(Global.ANDROID_AVD_HOME);
-            if (home == null) {
-                home = getFolder() + FOLDER_AVD;
-            }
-            sAvdLocation = home;
-            if (!sAvdLocation.endsWith(File.separator)) {
+            sAvdLocation = findValidPath(Global.ANDROID_AVD_HOME);
+            if (!sAvdLocation.endsWith(File.separator))
                 sAvdLocation += File.separator;
-            }
         }
         return sAvdLocation;
     }
@@ -108,20 +101,15 @@ public class AndroidLocation {
      * @return An OS-specific path, terminated by a separator.
      * @throws AndroidLocationException If an error occurs while obtaining the user's home folder path.
      */
-    public static String getUserHomeFolder() throws AndroidLocationException {
+    public static @NotNull String getUserHomeFolder() throws AndroidLocationException {
         return findValidPath(Global.TEST_TMPDIR, Global.USER_HOME, Global.HOME);
     }
 
     private static @NotNull String findHomeFolder() throws AndroidLocationException {
         String home = findValidPath(Global.ANDROID_SDK_HOME, Global.TEST_TMPDIR, Global.USER_HOME, Global.HOME);
-
         // If the above failed, we throw an exception.
-        if (home == null) {
-            throw new AndroidLocationException("prop: " + System.getProperty("ANDROID_SDK_HOME"));
-        }
-        if (!home.endsWith(File.separator)) {
+        if (!home.endsWith(File.separator))
             home += File.separator;
-        }
         return home + FOLDER_DOT_ANDROID + File.separator;
     }
 
@@ -141,12 +129,11 @@ public class AndroidLocation {
      * @return The content of the first property/variable that is a valid directory.
      * @throws AndroidLocationException If no valid path is found.
      */
-    private static @Nullable String findValidPath(Global @NotNull ... vars) throws AndroidLocationException {
+    private static @NotNull String findValidPath(Global @NotNull ... vars) throws AndroidLocationException {
         for (Global var : vars) {
             String path = var.validatePath(true);
-            if (path != null) {
+            if (path != null)
                 return path;
-            }
         }
         throw new AndroidLocationException("No valid path found.");
     }
@@ -186,11 +173,9 @@ public class AndroidLocation {
             String path;
             if (mIsSysProp) {
                 path = checkPath(System.getProperty(mName), silent);
-                if (path != null) {
+                if (path != null)
                     return path;
-                }
             }
-
             if (mIsEnvVar) {
                 path = checkPath(System.getenv(mName), silent);
                 return path;
@@ -198,19 +183,15 @@ public class AndroidLocation {
             return null;
         }
 
-        private String checkPath(String path, boolean silent)
-                throws AndroidLocationException {
-            if (path == null) {
+        private String checkPath(String path, boolean silent) throws AndroidLocationException {
+            if (path == null)
                 return null;
-            }
             File file = new File(path);
-            if (!file.isDirectory()) {
+            if (!file.isDirectory())
                 return null;
-            }
-            if (!(this == ANDROID_SDK_HOME && isSdkRootWithoutDotAndroid(file))) {
+            if (!(this == ANDROID_SDK_HOME && isSdkRootWithoutDotAndroid(file)))
                 return path;
-            }
-            if (!silent) {
+            if (!silent)
                 throw new AndroidLocationException(String.format(
                         """
                                 ANDROID_SDK_HOME is set to the root of your SDK: %1$s
@@ -219,7 +200,6 @@ public class AndroidLocation {
                                 Please set it to a different folder or do not set it at all.
                                 If this is not set we default to: %2$s""",
                         path, findValidPath(TEST_TMPDIR, USER_HOME, HOME)));
-            }
             return null;
         }
     }

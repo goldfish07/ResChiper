@@ -77,17 +77,15 @@ public class ResChiperTask extends DefaultTask {
                 .setRemoveStr(resChiperExtension.getEnableFilterStrings())
                 .setUnusedStrPath(resChiperExtension.getUnusedStringFile())
                 .setLanguageWhiteList(resChiperExtension.getLocaleWhiteList());
-
-        if (resChiperExtension.getMappingFile() != null) {
+        if (resChiperExtension.getMappingFile() != null)
             obfuscateBuilder.setMappingPath(resChiperExtension.getMappingFile());
-        }
 
-        if (keyStore.storeFile() != null && keyStore.storeFile().exists()) {
+        if (keyStore.storeFile() != null && keyStore.storeFile().exists())
             builder.setStoreFile(keyStore.storeFile().toPath())
                     .setKeyAlias(keyStore.keyAlias())
                     .setKeyPassword(keyStore.keyPassword())
                     .setStorePassword(keyStore.storePassword());
-        }
+
         builder.setObfuscateBundleBuilder(obfuscateBuilder.build());
 
         FileFilterCommand.Builder fileFilterBuilder = FileFilterCommand.builder();
@@ -115,16 +113,14 @@ public class ResChiperTask extends DefaultTask {
 
         if (usedFile.exists()) {
             System.out.println("find unused_strings.txt: " + usedFile.getAbsolutePath());
-            if (resChiperExtension.getEnableFilterStrings()) {
+            if (resChiperExtension.getEnableFilterStrings())
                 if (resChiperExtension.getUnusedStringFile() == null || resChiperExtension.getUnusedStringFile().isBlank()) {
                     resChiperExtension.setUnusedStringFile(usedFile.getAbsolutePath());
                     logger.log(Level.SEVERE, "replace unused_strings.txt!");
                 }
-            }
-        } else {
-            logger.log(Level.SEVERE, "not exists unused_strings.txt: " + usedFile.getAbsolutePath() +
-                    "\nuse default path: " + resChiperExtension.getUnusedStringFile());
-        }
+        } else
+            logger.log(Level.SEVERE, "not exists unused_strings.txt: " + usedFile.getAbsolutePath()
+                    + "\nuse default path: " + resChiperExtension.getUnusedStringFile());
     }
 
     /**
@@ -159,12 +155,10 @@ public class ResChiperTask extends DefaultTask {
      * @return The encrypted value.
      */
     private @NotNull String encrypt(String value) {
-        if (value == null) {
+        if (value == null)
             return "/";
-        }
-        if (value.length() > 2) {
+        if (value.length() > 2)
             return value.substring(0, value.length() / 2) + "****";
-        }
         return "****";
     }
 }

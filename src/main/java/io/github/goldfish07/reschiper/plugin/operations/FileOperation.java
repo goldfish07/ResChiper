@@ -49,11 +49,11 @@ public class FileOperation {
     }
 
     /**
-     * Uncompresses a ZIP file to a target directory.
+     * Uncompressed a ZIP file to a target directory.
      *
      * @param uncompressedFile The ZIP file to uncompress.
      * @param targetDir        The target directory to extract the contents.
-     * @throws IOException If an I/O error occurs during the uncompression.
+     * @throws IOException If an I/O error occurs during the uncompressed.
      */
     public static void uncompress(Path uncompressedFile, Path targetDir) throws IOException {
         checkFileExistsAndReadable(uncompressedFile);
@@ -72,17 +72,13 @@ public class FileOperation {
                     continue;
                 }
                 BufferedInputStream bis = new BufferedInputStream(zipFile.getInputStream(entry));
-
                 File file = new File(targetDir.toFile() + File.separator + entry.getName());
-
                 File parent = file.getParentFile();
                 if (parent != null && (!parent.exists())) {
                     FileUtils.createDirectories(parent.toPath());
                 }
-
                 FileOutputStream fos = new FileOutputStream(file);
                 BufferedOutputStream bos = new BufferedOutputStream(fos, BUFFER);
-
                 byte[] buf = new byte[BUFFER];
                 int len;
                 while ((len = bis.read(buf, 0, BUFFER)) != -1) {

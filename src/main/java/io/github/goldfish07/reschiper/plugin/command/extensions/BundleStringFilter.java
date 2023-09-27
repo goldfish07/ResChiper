@@ -57,17 +57,14 @@ public class BundleStringFilter {
      */
     public AppBundle filter() throws IOException {
         TimeClock timeClock = new TimeClock();
-
         File unusedStrFile = new File(unusedStrPath);
         Map<BundleModuleName, BundleModule> obfuscatedModules = new HashMap<>();
-
         if (unusedStrFile.exists()) {
             //shrink-results
             unUsedNameSet.addAll(Files.readAllLines(Paths.get(unusedStrPath)));
             System.out.println("unused string : " + unUsedNameSet.size());
         }
-
-        if (!unUsedNameSet.isEmpty() || !languageWhiteList.isEmpty()) {
+        if (!unUsedNameSet.isEmpty() || !languageWhiteList.isEmpty())
             for (Map.Entry<BundleModuleName, BundleModule> entry : rawAppBundle.getModules().entrySet()) {
                 BundleModule bundleModule = entry.getValue();
                 BundleModuleName bundleModuleName = entry.getKey();
@@ -75,14 +72,11 @@ public class BundleStringFilter {
                 BundleModule obfuscatedModule = obfuscateBundleModule(bundleModule);
                 obfuscatedModules.put(bundleModuleName, obfuscatedModule);
             }
-        } else {
+        else
             return rawAppBundle;
-        }
-
         AppBundle appBundle = rawAppBundle.toBuilder()
                 .setModules(ImmutableMap.copyOf(obfuscatedModules))
                 .build();
-
         System.out.printf("filtering strings completed in %s\n%n", timeClock.getElapsedTime());
         return appBundle;
     }
@@ -95,12 +89,10 @@ public class BundleStringFilter {
      */
     private BundleModule obfuscateBundleModule(@NotNull BundleModule bundleModule) {
         BundleModule.Builder builder = bundleModule.toBuilder();
-
         // obfuscate resourceTable
         Resources.ResourceTable obfuscatedResTable = obfuscateResourceTable(bundleModule);
-        if (obfuscatedResTable != null) {
+        if (obfuscatedResTable != null)
             builder.setResourceTable(obfuscatedResTable);
-        }
         return builder.build();
     }
 
@@ -115,51 +107,41 @@ public class BundleStringFilter {
             return null;
         }
         Resources.ResourceTable rawTable = bundleModule.getResourceTable().get();
-
         ResourceTableBuilder tableBuilder = new ResourceTableBuilder();
         List<Resources.Package> packageList = rawTable.getPackageList();
-
-        if (packageList.isEmpty()) {
+        if (packageList.isEmpty())
             return tableBuilder.build();
-        }
-
         for (Resources.Package resPackage : packageList) {
-            if (resPackage == null) {
+            if (resPackage == null)
                 continue;
-            }
             ResourceTableBuilder.PackageBuilder packageBuilder = tableBuilder.addPackage(resPackage);
             List<Resources.Type> typeList = resPackage.getTypeList();
             Set<String> languageFilterSet = new HashSet<>(100);
             List<String> nameFilterList = new ArrayList<>(3000);
             for (Resources.Type resType : typeList) {
-                if (resType == null) {
+                if (resType == null)
                     continue;
-                }
                 List<Resources.Entry> entryList = resType.getEntryList();
                 for (Resources.Entry resEntry : entryList) {
-                    if (resEntry == null) {
+                    if (resEntry == null)
                         continue;
-                    }
-
                     if (resPackage.getPackageId().getId() == 127 && resType.getName().equals("string") &&
-                        languageWhiteList != null && !languageWhiteList.isEmpty()) {
+                            languageWhiteList != null && !languageWhiteList.isEmpty()) {
                         //delete language
                         List<Resources.ConfigValue> languageValue = resEntry.getConfigValueList().stream()
                                 .filter(Objects::nonNull)
                                 .filter(configValue -> {
                                     String locale = configValue.getConfig().getLocale();
-                                    if (keepLanguage(locale)) {
+                                    if (keepLanguage(locale))
                                         return true;
-                                    }
                                     languageFilterSet.add(locale);
                                     return false;
                                 }).collect(Collectors.toList());
                         resEntry = resEntry.toBuilder().clearConfigValue().addAllConfigValue(languageValue).build();
                     }
-
                     // delete unused strings identified by the shrink process
                     if (resPackage.getPackageId().getId() == 127 && resType.getName().equals("string")
-                        && !unUsedNameSet.isEmpty() && unUsedNameSet.contains(resEntry.getName())) {
+                            && !unUsedNameSet.isEmpty() && unUsedNameSet.contains(resEntry.getName())) {
                         List<Resources.ConfigValue> proguardConfigValue = resEntry.getConfigValueList().stream()
                                 .filter(Objects::nonNull)
                                 .map(configValue -> {
@@ -183,14 +165,12 @@ public class BundleStringFilter {
             }
             System.out.println("filtering " + resPackage.getPackageName() + " id:" + resPackage.getPackageId().getId());
             StringBuilder l = new StringBuilder();
-            for (String lan : languageFilterSet) {
+            for (String lan : languageFilterSet)
                 l.append("[remove language] : ").append(lan).append("\n");
-            }
             System.out.println(l);
             l = new StringBuilder();
-            for (String name : nameFilterList) {
+            for (String name : nameFilterList)
                 l.append("[delete name] ").append(name).append("\n");
-            }
             System.out.println(l);
             System.out.println("-----------");
             packageBuilder.build();
@@ -205,18 +185,16 @@ public class BundleStringFilter {
      * @return True if the language should be preserved, false otherwise.
      */
     private boolean keepLanguage(String lan) {
-        if (lan == null || lan.equals(" ") || lan.isEmpty()) {
+        if (lan == null || lan.equals(" ") || lan.isEmpty())
             return true;
-        }
         if (lan.contains("-")) {
             int index = lan.indexOf("-");
             if (index != -1) {
                 String language = lan.substring(0, index);
                 return languageWhiteList.contains(language);
             }
-        } else {
+        } else
             return languageWhiteList.contains(lan);
-        }
         return false;
     }
 }

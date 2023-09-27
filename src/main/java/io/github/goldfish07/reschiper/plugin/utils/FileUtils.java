@@ -24,13 +24,11 @@ public class FileUtils {
         checkNotNull(file, "File must not be null");
         checkArgument(file.exists(), "File does not exist");
         checkArgument(file.isFile(), "File is not a regular file");
-
         try (BufferedReader reader = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
             List<String> lines = new ArrayList<>();
             String line;
-            while ((line = reader.readLine()) != null) {
+            while ((line = reader.readLine()) != null)
                 lines.add(line);
-            }
             return String.join(UNIX_LINE_SEPARATOR, lines);
         }
     }
@@ -45,7 +43,6 @@ public class FileUtils {
     public static void writeToFile(@NotNull File file, @NotNull String content) throws IOException {
         checkNotNull(file, "File must not be null");
         checkNotNull(content, "Content must not be null");
-
         try (FileWriter writer = new FileWriter(file, StandardCharsets.UTF_8)) {
             writer.write(content);
         }

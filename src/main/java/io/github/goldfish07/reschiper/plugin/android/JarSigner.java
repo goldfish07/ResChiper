@@ -20,8 +20,8 @@ public class JarSigner {
      *
      * @param toBeSigned The file to be signed.
      * @param signature  The signature information.
-     * @throws IOException            If an I/O error occurs while signing the file.
-     * @throws InterruptedException   If the signing process is interrupted.
+     * @throws IOException          If an I/O error occurs while signing the file.
+     * @throws InterruptedException If the signing process is interrupted.
      */
     public void sign(File toBeSigned, Signature signature) throws IOException, InterruptedException {
         new OpenJDKJarSigner().sign(toBeSigned, signature);
@@ -39,10 +39,10 @@ public class JarSigner {
         /**
          * Constructs a Signature object with the provided information.
          *
-         * @param storeFile    The path to the keystore file.
+         * @param storeFile     The path to the keystore file.
          * @param storePassword The password for the keystore.
-         * @param keyAlias     The alias for the key.
-         * @param keyPassword  The password for the key.
+         * @param keyAlias      The alias for the key.
+         * @param keyPassword   The password for the key.
          */
         public Signature(Path storeFile, String storePassword, String keyAlias, String keyPassword) {
             this.storeFile = storeFile;
@@ -78,8 +78,7 @@ public class JarSigner {
      * @throws IllegalArgumentException If the string value is empty.
      */
     public static void checkStringIsEmpty(String value, String name) {
-        if (value == null || value.trim().isEmpty()) {
+        if (value == null || value.trim().isEmpty())
             throw new IllegalArgumentException(String.format("Wrong properties: %s can not be empty", name));
-        }
     }
 }

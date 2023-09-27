@@ -35,7 +35,8 @@ public class AppBundlePackager {
      * @throws IOException If an I/O error occurs during packaging or writing.
      */
     public void execute() throws IOException {
-        System.out.println("""
+        System.out.println(
+                """
                 ----------------------------------------
                  Resource Packaging:
                 ----------------------------------------

@@ -44,22 +44,19 @@ public class Parser {
          */
         public FileFilterConfig fileFilterParse() throws DocumentException {
             FileFilterConfig fileFilter = new FileFilterConfig();
-
             SAXReader reader = new SAXReader();
             Document doc = reader.read(configPath.toFile());
             Element root = doc.getRootElement();
             for (Iterator<Element> i = root.elementIterator("filter"); i.hasNext(); ) {
                 Element element = i.next();
                 String isActiveValue = element.attributeValue("isactive");
-                if (isActiveValue != null && isActiveValue.equals("true")) {
+                if (isActiveValue != null && isActiveValue.equals("true"))
                     fileFilter.setActive(true);
-                }
                 for (Iterator<Element> rules = element.elementIterator("rule"); rules.hasNext(); ) {
                     Element ruleElement = rules.next();
                     String rule = ruleElement.attributeValue("value");
-                    if (rule != null) {
+                    if (rule != null)
                         fileFilter.addRule(rule);
-                    }
                 }
             }
             return fileFilter;
@@ -79,19 +76,16 @@ public class Parser {
             for (Iterator<Element> i = root.elementIterator("issue"); i.hasNext(); ) {
                 Element element = i.next();
                 String id = element.attributeValue("id");
-                if (id == null || !id.equals("whitelist")) {
+                if (id == null || !id.equals("whitelist"))
                     continue;
-                }
                 String isActive = element.attributeValue("isactive");
-                if (isActive != null && isActive.equals("true")) {
+                if (isActive != null && isActive.equals("true"))
                     resChiperConfig.setUseWhiteList(true);
-                }
                 for (Iterator<Element> rules = element.elementIterator("path"); rules.hasNext(); ) {
                     Element ruleElement = rules.next();
                     String rule = ruleElement.attributeValue("value");
-                    if (rule != null) {
+                    if (rule != null)
                         resChiperConfig.addWhiteList(rule);
-                    }
                 }
             }
             // File filter
@@ -112,13 +106,11 @@ public class Parser {
             SAXReader reader = new SAXReader();
             Document doc = reader.read(configPath.toFile());
             Element root = doc.getRootElement();
-
             for (Iterator<Element> i = root.elementIterator("filter-str"); i.hasNext(); ) {
                 Element element = i.next();
                 String isActive = element.attributeValue("isactive");
-                if (isActive != null && isActive.equalsIgnoreCase("true")) {
+                if (isActive != null && isActive.equalsIgnoreCase("true"))
                     config.setActive(true);
-                }
                 for (Iterator<Element> rules = element.elementIterator("path"); rules.hasNext(); ) {
                     Element ruleElement = rules.next();
                     String path = ruleElement.attributeValue("value");

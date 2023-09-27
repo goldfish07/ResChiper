@@ -24,9 +24,8 @@ public class NativeLibrariesOperation {
                 break;
             }
         }
-        if (index == -1) {
+        if (index == -1)
             return nativeLibraries;
-        }
         return nativeLibraries.toBuilder().removeDirectory(index).build();
     }
 }

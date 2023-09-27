@@ -32,9 +32,8 @@ public class ResourceTableBuilder {
      * @return The package builder.
      */
     public PackageBuilder addPackage(Resources.@NotNull Package resPackage) {
-        if (resPackageMap.containsKey(resPackage.getPackageName())) {
+        if (resPackageMap.containsKey(resPackage.getPackageName()))
             return resPackageMap.get(resPackage.getPackageName());
-        }
         PackageBuilder packageBuilder = new PackageBuilder(resPackage);
         resPackageMap.put(resPackage.getPackageName(), packageBuilder);
         return packageBuilder;
@@ -54,7 +53,6 @@ public class ResourceTableBuilder {
      * Builder for generating packages within the ResourceTable.
      */
     public class PackageBuilder {
-
         Resources.Package.Builder resPackageBuilder;
 
         private PackageBuilder(Resources.Package resPackage) {
@@ -80,7 +78,6 @@ public class ResourceTableBuilder {
             checkArgument(
                     table.getPackageList().stream().noneMatch(pkg -> pkg.getPackageId().getId() == id),
                     "Package ID %s already in use.", id);
-
             resPackageBuilder = Resources.Package.newBuilder()
                     .setPackageId(resPackage.getPackageId())
                     .setPackageName(resPackage.getPackageName());
@@ -123,11 +120,10 @@ public class ResourceTableBuilder {
         public PackageBuilder addResource(Resources.Type resType, Resources.@NotNull Entry resEntry) {
             Resources.Type.Builder type = getResourceType(resType);
             checkState(resPackageBuilder != null, "A package must be created before a resource can be added.");
-            if (!resEntry.getEntryId().isInitialized()) {
+            if (!resEntry.getEntryId().isInitialized())
                 resEntry = resEntry.toBuilder().setEntryId(
                         resEntry.getEntryId().toBuilder().setId(0).build()
                 ).build();
-            }
             type.addEntry(resEntry.toBuilder());
             return this;
         }

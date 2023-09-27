@@ -24,9 +24,8 @@ public class Bundle {
             if (bundleFile != null) {
                 regularFile = bundleFile.getClass().getMethod("get").invoke(bundleFile);
                 return (File) regularFile.getClass().getMethod("getAsFile").invoke(regularFile);
-            } else {
+            } else
                 return null;
-            }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }

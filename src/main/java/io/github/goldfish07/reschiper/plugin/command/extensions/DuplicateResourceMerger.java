@@ -67,15 +67,13 @@ public class DuplicateResourceMerger {
     public AppBundle merge() throws IOException {
         TimeClock timeClock = new TimeClock();
         List<BundleModule> mergedBundleModuleList = new ArrayList<>();
-        for (Map.Entry<BundleModuleName, BundleModule> moduleEntry : rawAppBundle.getModules().entrySet()) {
+        for (Map.Entry<BundleModuleName, BundleModule> moduleEntry : rawAppBundle.getModules().entrySet())
             mergedBundleModuleList.add(mergeBundleModule(moduleEntry.getValue()));
-        }
         AppBundle mergedAppBundle = AppBundle.buildFromModules(
                 mergedBundleModuleList.stream().collect(toImmutableList()),
                 rawAppBundle.getBundleConfig(),
                 rawAppBundle.getBundleMetadata()
         );
-
         System.out.printf(
                 """
                         removed duplicate resources done, took %s
@@ -83,8 +81,7 @@ public class DuplicateResourceMerger {
                          Reduce file count: %s
                          Reduce file size: %s
                         -----------------------------------------%n""",
-                timeClock.getElapsedTime(),
-                mergeDuplicatedTotalCount,
+                timeClock.getElapsedTime(), mergeDuplicatedTotalCount,
                 FileOperation.getNetFileSizeDescription(mergeDuplicatedTotalSize)
         );
         return mergedAppBundle;
@@ -105,14 +102,11 @@ public class DuplicateResourceMerger {
             logger.warning("- Deleted existing log file: " + logFile.toPath());
             Files.delete(logFile.toPath());
         }
-
         Resources.ResourceTable table = bundleModule.getResourceTable().orElse(Resources.ResourceTable.getDefaultInstance());
-        if (table.getPackageList().isEmpty() || bundleModule.getEntries().isEmpty()) {
+        if (table.getPackageList().isEmpty() || bundleModule.getEntries().isEmpty())
             return bundleModule;
-        }
         md5FileList.clear();
         duplicatedFileList.clear();
-
         List<ModuleEntry> mergedModuleEntry = new ArrayList<>();
         for (ModuleEntry entry : bundleModule.getEntries()) {
             if (!entry.getPath().startsWith(BundleModule.RESOURCES_DIRECTORY)) {
@@ -120,15 +114,14 @@ public class DuplicateResourceMerger {
                 continue;
             }
             String md5 = AppBundleUtils.getEntryMd5(bundleZipFile, entry, bundleModule);
-            if (md5FileList.containsKey(md5)) {
+            if (md5FileList.containsKey(md5))
                 duplicatedFileList.put(entry.getPath(), md5);
-            } else {
+            else {
                 md5FileList.put(md5, entry.getPath());
                 mergedModuleEntry.add(entry);
             }
         }
         generateDuplicatedLog(logFile, bundleModule);
-
         Resources.ResourceTable mergedTable = mergeResourceTable(table);
         return bundleModule.toBuilder()
                 .setResourceTable(mergedTable)
@@ -164,13 +157,11 @@ public class DuplicateResourceMerger {
         return Stream.of(entry.getConfigValueList())
                 .flatMap(Collection::stream)
                 .map(configValue -> {
-                    if (!configValue.getValue().getItem().hasFile()) {
+                    if (!configValue.getValue().getItem().hasFile())
                         return configValue;
-                    }
                     ZipPath zipPath = ZipPath.create(configValue.getValue().getItem().getFile().getPath());
-                    if (duplicatedFileList.containsKey(zipPath)) {
+                    if (duplicatedFileList.containsKey(zipPath))
                         zipPath = md5FileList.get(duplicatedFileList.get(zipPath));
-                    }
                     return ResourceTableOperation.replaceEntryPath(configValue, zipPath.toString());
                 }).collect(Collectors.toList());
     }
@@ -206,8 +197,7 @@ public class DuplicateResourceMerger {
             long fileSize = AppBundleUtils.getZipEntrySize(bundleZipFile, moduleEntry, bundleModule);
             duplicatedSize += (int) fileSize;
             System.out.printf("- %s (size %s)%n", entry.getKey().toString(), FileOperation.getNetFileSizeDescription(duplicatedSize));
-            writer.write(
-                    "\t" + entry.getKey().toString()
+            writer.write("\t" + entry.getKey().toString()
                     + " -> "
                     + keepPath.toString()
                     + " (size " + FileOperation.getNetFileSizeDescription(fileSize) + ")"

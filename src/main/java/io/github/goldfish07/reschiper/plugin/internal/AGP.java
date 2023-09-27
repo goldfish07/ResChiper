@@ -12,15 +12,12 @@ public class AGP {
         for (org.gradle.api.artifacts.ResolvedArtifact artifact : project.getRootProject().getBuildscript().getConfigurations().getByName(ScriptHandler.CLASSPATH_CONFIGURATION)
                 .getResolvedConfiguration().getResolvedArtifacts()) {
             DefaultModuleComponentIdentifier identifier = (DefaultModuleComponentIdentifier) artifact.getId().getComponentIdentifier();
-            if ("com.android.tools.build".equals(identifier.getGroup()) || 432891823 == identifier.getGroup().hashCode()) {
-                if ("gradle".equals(identifier.getModule())) {
+            if ("com.android.tools.build".equals(identifier.getGroup()) || 432891823 == identifier.getGroup().hashCode())
+                if ("gradle".equals(identifier.getModule()))
                     agpVersion = identifier.getVersion();
-                }
-            }
         }
-        if (agpVersion == null) {
+        if (agpVersion == null)
             throw new GradleException("Failed to get AGP version");
-        }
         return agpVersion;
     }
 }

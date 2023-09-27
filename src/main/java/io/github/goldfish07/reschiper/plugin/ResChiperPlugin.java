@@ -32,16 +32,15 @@ public class ResChiperPlugin implements Plugin<Project> {
     private void createResChiperTask(@NotNull Project project, @NotNull ApplicationVariant variant) {
         String variantName = variant.getName().substring(0, 1).toUpperCase() + variant.getName().substring(1);
         String bundleTaskName = "bundle" + variantName;
-        if (project.getTasks().findByName(bundleTaskName) == null) {
+        if (project.getTasks().findByName(bundleTaskName) == null)
             return;
-        }
         String taskName = "resChiper" + variantName;
         ResChiperTask resChiperTask;
-        if (project.getTasks().findByName(taskName) == null) {
+        if (project.getTasks().findByName(taskName) == null)
             resChiperTask = project.getTasks().create(taskName, ResChiperTask.class);
-        } else {
+        else
             resChiperTask = (ResChiperTask) project.getTasks().getByName(taskName);
-        }
+
         resChiperTask.setVariantScope(variant);
         resChiperTask.doFirst(task -> {
             printResChiperBuildConfiguration();
@@ -54,9 +53,8 @@ public class ResChiperPlugin implements Plugin<Project> {
         resChiperTask.dependsOn(bundlePackageTask);
 
         String finalizeBundleTaskName = "sign" + variantName + "Bundle";
-        if (project.getTasks().findByName(finalizeBundleTaskName) != null) {
+        if (project.getTasks().findByName(finalizeBundleTaskName) != null)
             resChiperTask.dependsOn(project.getTasks().getByName(finalizeBundleTaskName));
-        }
     }
 
     /**
@@ -65,9 +63,8 @@ public class ResChiperPlugin implements Plugin<Project> {
      * @param project The Gradle project.
      */
     private void checkApplicationPlugin(@NotNull Project project) {
-        if (!project.getPlugins().hasPlugin("com.android.application")) {
+        if (!project.getPlugins().hasPlugin("com.android.application"))
             throw new GradleException("Android Application plugin 'com.android.application' is required");
-        }
     }
 
     /**

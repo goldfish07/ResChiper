@@ -86,16 +86,14 @@ public class AppBundleUtils {
      * @return The hexadecimal string.
      */
     public static @NotNull String bytesToHexString(byte @NotNull [] src) {
-        if (src.length == 0) {
+        if (src.length == 0)
             return "";
-        }
         StringBuilder stringBuilder = new StringBuilder(src.length);
         for (byte b : src) {
             int v = b & 0xFF;
             String hv = Integer.toHexString(v);
-            if (hv.length() < 2) {
+            if (hv.length() < 2)
                 stringBuilder.append(0);
-            }
             stringBuilder.append(hv);
         }
         return stringBuilder.toString();
@@ -111,9 +109,8 @@ public class AppBundleUtils {
         int index = resourceName.indexOf(".R.");
         String value = resourceName.substring(index + 3);
         String[] values = value.replace(".", "/").split("/");
-        if (values.length != 2) {
+        if (values.length != 2)
             throw new RuntimeException("Invalid resource format, it should be package.type.entry, yours: " + resourceName);
-        }
         return values[values.length - 1];
     }
 
@@ -127,9 +124,8 @@ public class AppBundleUtils {
         int index = resourceName.indexOf(".R.");
         String value = resourceName.substring(index + 3);
         String[] values = value.replace(".", "/").split("/");
-        if (values.length != 2) {
+        if (values.length != 2)
             throw new RuntimeException("Invalid resource format, it should be package.type.entry, yours: " + resourceName);
-        }
         return values[0];
     }
 

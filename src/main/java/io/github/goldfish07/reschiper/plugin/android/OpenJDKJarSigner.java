@@ -25,17 +25,14 @@ public class OpenJDKJarSigner {
         checkFileExistsAndReadable(signature.storeFile());
         File jarSigner = locatedJarSigner();
         List<String> args = new ArrayList<>();
-        if (jarSigner != null) {
+        if (jarSigner != null)
             args.add(jarSigner.getAbsolutePath());
-        } else {
+        else
             args.add(jarSignerExec);
-        }
         args.add("-keystore");
         args.add(signature.storeFile().toFile().getAbsolutePath());
-
         File keyStorePasswordFile = null;
         File aliasPasswordFile = null;
-
         // write passwords to a file, so it cannot be spied on.
         if (signature.storePassword() != null) {
             keyStorePasswordFile = File.createTempFile("store", "prv");
@@ -43,23 +40,17 @@ public class OpenJDKJarSigner {
             args.add("-storepass:file");
             args.add(keyStorePasswordFile.getAbsolutePath());
         }
-
         if (signature.keyPassword() != null) {
             aliasPasswordFile = File.createTempFile("alias", "prv");
             FileUtils.writeToFile(aliasPasswordFile, signature.keyPassword());
             args.add("--keypass:file");
             args.add(aliasPasswordFile.getAbsolutePath());
         }
-
         args.add(toBeSigned.getAbsolutePath());
-
-        if (signature.keyAlias() != null) {
+        if (signature.keyAlias() != null)
             args.add(signature.keyAlias());
-        }
-
         File errorLog = File.createTempFile("error", ".log");
         File outputLog = File.createTempFile("output", ".log");
-
         logger.fine("Invoking " + Joiner.on(" ").join(args));
         Process process = start(new ProcessBuilder(args).redirectError(errorLog).redirectOutput(outputLog));
         int exitCode = process.waitFor();
@@ -73,12 +64,10 @@ public class OpenJDKJarSigner {
                     )
             );
         }
-        if (keyStorePasswordFile != null) {
+        if (keyStorePasswordFile != null)
             keyStorePasswordFile.delete();
-        }
-        if (aliasPasswordFile != null) {
+        if (aliasPasswordFile != null)
             aliasPasswordFile.delete();
-        }
     }
 
     @Contract("_ -> new")
@@ -94,9 +83,9 @@ public class OpenJDKJarSigner {
         // jarsigner will be located.
         File javaHome = new File(System.getProperty("java.home"));
         File jarSigner = getJarSigner(javaHome);
-        if (jarSigner.exists()) {
+        if (jarSigner.exists())
             return jarSigner;
-        } else {
+        else {
             // if not in java.home bin, it's probable that the java.home points to a JRE
             // installation, we should then look one folder up and in the bin folder.
             jarSigner = getJarSigner(javaHome.getParentFile());

@@ -1,7 +1,6 @@
 package io.github.goldfish07.reschiper.plugin.command;
 
 import com.android.tools.build.bundletool.flags.Flag;
-import com.android.tools.build.bundletool.flags.ParsedFlags;
 import com.android.tools.build.bundletool.model.AppBundle;
 import com.android.tools.build.bundletool.model.exceptions.CommandExecutionException;
 import com.google.auto.value.AutoValue;
@@ -19,11 +18,8 @@ import io.github.goldfish07.reschiper.plugin.command.model.StringFilterCommand;
 import io.github.goldfish07.reschiper.plugin.obfuscation.ResourcesObfuscator;
 import io.github.goldfish07.reschiper.plugin.operations.FileOperation;
 import io.github.goldfish07.reschiper.plugin.parser.Parser;
-import io.github.goldfish07.reschiper.plugin.parser.xml.FileFilterConfig;
-import io.github.goldfish07.reschiper.plugin.parser.xml.ResChiperConfig;
 import io.github.goldfish07.reschiper.plugin.parser.xml.StringFilterConfig;
 import io.github.goldfish07.reschiper.plugin.utils.TimeClock;
-import org.dom4j.DocumentException;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -90,22 +86,6 @@ public abstract class Command {
     private static final Logger logger = Logger.getLogger(Command.class.getName());
 
     /**
-     * A flag representing whether to merge duplicated resources.
-     */
-    private static final Flag<Boolean> MERGE_DUPLICATED_RES_FLAG = Flag.booleanFlag("merge-duplicated-res");
-
-    /**
-     * A flag representing whether to disable signing the bundle after processing.
-     */
-    private static final Flag<Boolean> DISABLE_SIGN_FLAG = Flag.booleanFlag("disable-sign");
-
-    /**
-     * A flag representing the location of the keystore file (optional).
-     */
-    private static final Flag<Path> STORE_FILE_FLAG = Flag.path("storeFile");
-
-
-    /**
      * Enumeration of supported command types.
      */
     public enum TYPE {
@@ -116,26 +96,6 @@ public abstract class Command {
     }
 
     /**
-     * Returns the command corresponding to the given command type.
-     *
-     * @param commandType The type of command to retrieve.
-     * @return The command string corresponding to the specified type.
-     */
-    @Contract(pure = true)
-    public static @NotNull String getCommand(TYPE commandType) {
-        if (commandType == TYPE.FILTER_FILE)
-            return "filter-file";
-        else if (commandType == TYPE.FILTER_STRING)
-            return "filter-string";
-        else if (commandType == TYPE.DUPLICATE_RES_MERGE)
-            return "merge-duplicated-res";
-        else if (commandType == TYPE.OBFUSCATE_BUNDLE)
-            return "obfuscate-bundle";
-
-        return "";
-    }
-
-    /**
      * Creates a new builder for constructing a Command instance.
      *
      * @return A new instance of the Command.Builder.
@@ -143,78 +103,6 @@ public abstract class Command {
     @Contract(" -> new")
     public static @NotNull Command.Builder builder() {
         return new AutoValue_Command.Builder();
-    }
-
-    /**
-     * Creates a Command instance based on the provided command type and parsed flags.
-     *
-     * @param commandType The type of the command to create.
-     * @param flags       The parsed flags containing command parameters.
-     * @return A Command instance based on the specified command type and flags.
-     * @throws DocumentException If there is an issue parsing the document.
-     */
-    public static Command fromFlag(TYPE commandType, ParsedFlags flags) throws DocumentException {
-        Builder builder = builder();
-        builder.setBundlePath(BUNDLE_LOCATION_FLAG.getRequiredValue(flags));
-        builder.setOutputPath(OUTPUT_FILE_FLAG.getRequiredValue(flags));
-        STORE_FILE_FLAG.getValue(flags).ifPresent(builder::setStoreFile);
-        STORE_PASSWORD_FLAG.getValue(flags).ifPresent(builder::setStorePassword);
-        KEY_ALIAS_FLAG.getValue(flags).ifPresent(builder::setKeyAlias);
-        KEY_PASSWORD_FLAG.getValue(flags).ifPresent(builder::setKeyPassword);
-
-        if (commandType == TYPE.DUPLICATE_RES_MERGE) {
-            DuplicateResMergerCommand.Builder resMergeBuilderCommand = DuplicateResMergerCommand.builder();
-            DISABLE_SIGN_FLAG.getValue(flags).ifPresent(resMergeBuilderCommand::setDisableSign);
-            builder.setDuplicateResMergeBuilder(resMergeBuilderCommand.build());
-        } else if (commandType == TYPE.OBFUSCATE_BUNDLE) {
-            ObfuscateBundleCommand.Builder obfuscateCommand = ObfuscateBundleCommand.builder();
-            obfuscateCommand.setEnableObfuscate(true);
-            // config
-            Path configPath = CONFIG_LOCATION_FLAG.getRequiredValue(flags);
-            ResChiperConfig config = new Parser.XML(configPath).resChiperParse();
-            obfuscateCommand.setWhiteList(config.getWhiteList());
-            if (config.getFileFilter() != null) {
-                obfuscateCommand.setFilterFile(config.getFileFilter().isActive());
-                obfuscateCommand.setFileFilterRules(config.getFileFilter().getRules());
-            }
-            MAPPING_FLAG.getValue(flags).ifPresent(obfuscateCommand::setMappingPath);
-
-            if (config.getStringFilterConfig() != null) {
-                obfuscateCommand.setRemoveStr(config.getStringFilterConfig().isActive());
-                obfuscateCommand.setUnusedStrPath(config.getStringFilterConfig().getPath());
-                obfuscateCommand.setLanguageWhiteList(config.getStringFilterConfig().getLanguageWhiteList());
-            }
-            builder.setObfuscateBundleBuilder(obfuscateCommand.build());
-            MERGE_DUPLICATED_RES_FLAG.getValue(flags).ifPresent(obfuscateCommand::setMergeDuplicatedResources);
-            DISABLE_SIGN_FLAG.getValue(flags).ifPresent(obfuscateCommand::setDisableSign);
-            STORE_FILE_FLAG.getValue(flags).ifPresent(builder::setStoreFile);
-            STORE_PASSWORD_FLAG.getValue(flags).ifPresent(builder::setStorePassword);
-            KEY_ALIAS_FLAG.getValue(flags).ifPresent(builder::setKeyAlias);
-            KEY_PASSWORD_FLAG.getValue(flags).ifPresent(builder::setKeyPassword);
-        } else if (commandType == TYPE.FILTER_FILE) {
-            FileFilterCommand.Builder filterFileBuilder = FileFilterCommand.builder();
-            // parse config
-            Optional<Path> configOptional = CONFIG_LOCATION_FLAG.getValue(flags);
-            if (configOptional.isPresent()) {
-                Path configPath = configOptional.get();
-                if (!configPath.toFile().getName().endsWith(".xml")) {
-                    throw CommandExecutionException.builder().withInternalMessage("Wrong properties: %s must end with '.xml'.", CONFIG_LOCATION_FLAG).build();
-                }
-                FileFilterConfig fileFilter = new Parser.XML(configPath).fileFilterParse();
-                if (!fileFilter.isActive()) {
-                    throw CommandExecutionException.builder().withInternalMessage("parser attribute filter#isactive cannot be 'false' in %s command", getCommand(TYPE.FILTER_STRING)).build();
-                }
-                filterFileBuilder.setFileFilterRules(fileFilter.getRules());
-            }
-            DISABLE_SIGN_FLAG.getValue(flags).ifPresent(filterFileBuilder::setDisableSign);
-            builder.setFileFilterBuilder(filterFileBuilder.build());
-        } else if (commandType == TYPE.FILTER_STRING) {
-            StringFilterCommand.Builder stringFilter = StringFilterCommand.builder();
-            stringFilter.setConfigPath(CONFIG_LOCATION_FLAG.getRequiredValue(flags));
-            builder.setStringFilterBuilder(stringFilter.build());
-        }
-
-        return builder.build(builder.build(), commandType);
     }
 
     /**
@@ -233,9 +121,8 @@ public abstract class Command {
             // filter file
             if (bundleCommand.getFilterFile().isPresent() && bundleCommand.getFilterFile().get()) {
                 Set<String> fileFilterRules = new HashSet<>();
-                if (bundleCommand.getFileFilterRules().isPresent()) {
+                if (bundleCommand.getFileFilterRules().isPresent())
                     fileFilterRules = bundleCommand.getFileFilterRules().get();
-                }
                 BundleFileFilter filter = new BundleFileFilter(getBundlePath(), appBundle, fileFilterRules);
                 appBundle = filter.filter();
             }
@@ -245,16 +132,14 @@ public abstract class Command {
                 File unusedFile = new File("");
                 if (bundleCommand.getUnusedStrPath().isPresent()) {
                     File file = new File(bundleCommand.getUnusedStrPath().get());
-                    if (file.exists()) {
+                    if (file.exists())
                         unusedFile = file;
-                    } else {
+                    else
                         System.out.println("unused_strings.txt file is not exists!");
-                    }
                 }
                 Set<String> languageWhiteList = new HashSet<>();
-                if (bundleCommand.getLanguageWhiteList().isPresent()) {
+                if (bundleCommand.getLanguageWhiteList().isPresent())
                     languageWhiteList = bundleCommand.getLanguageWhiteList().get();
-                }
                 BundleStringFilter filter = new BundleStringFilter(getBundlePath(), appBundle, unusedFile.getPath(), languageWhiteList);
                 appBundle = filter.filter();
             }
@@ -264,16 +149,17 @@ public abstract class Command {
                 DuplicateResourceMerger merger = new DuplicateResourceMerger(getBundlePath(), appBundle, getOutputPath().getParent());
                 appBundle = merger.merge();
             }
+
             // obfuscate bundle
             if (bundleCommand.getEnableObfuscate()) {
                 Path mappingPath = null;
-                if (bundleCommand.getMappingPath().isPresent()) {
+                if (bundleCommand.getMappingPath().isPresent())
                     mappingPath = bundleCommand.getMappingPath().get();
-                }
                 ResourcesObfuscator obfuscator = new ResourcesObfuscator(getBundlePath(), appBundle, bundleCommand.getWhiteList(), getOutputPath().getParent(), mappingPath);
                 obfuscator.withMode(obfuscator.getMode(bundleCommand.getObfuscationMode() == null ? "default" : bundleCommand.getObfuscationMode()));
                 appBundle = obfuscator.obfuscate();
             }
+
             // package bundle
             new AppBundlePackager(appBundle, getOutputPath()).execute();
             // sign bundle
@@ -343,11 +229,10 @@ public abstract class Command {
             StringFilterCommand bundleCommand = getStringFilterBuilder();
             // parse config.xml
             StringFilterConfig config = new Parser.XML(bundleCommand.getConfigPath().get()).stringFilterParse();
-            if (!config.isActive()) {
+            if (!config.isActive())
                 throw CommandExecutionException.builder()
                         .withInternalMessage("parser attribute filter#isactive can not be 'false' in %s command", commandType.name())
                         .build();
-            }
             // filter bundle strings
             BundleStringFilter filter = new BundleStringFilter(getBundlePath(), appBundle, config.getPath(), config.getLanguageWhiteList());
             AppBundle filteredAppBundle = filter.filter();
@@ -369,7 +254,6 @@ public abstract class Command {
                     -----------------------------------------%n""";
         }
 
-
         long rawSize = FileOperation.getFileSizes(getBundlePath().toFile());
         long filteredSize = FileOperation.getFileSizes(getOutputPath().toFile());
 
@@ -377,7 +261,6 @@ public abstract class Command {
                 FileOperation.getNetFileSizeDescription(rawSize - filteredSize),
                 FileOperation.getNetFileSizeDescription(rawSize),
                 FileOperation.getNetFileSizeDescription(filteredSize));
-
         return getOutputPath();
     }
 
@@ -559,47 +442,36 @@ public abstract class Command {
          */
         public Command build(@NotNull Command command, TYPE commandType) {
             checkFileExistsAndReadable(command.getBundlePath());
-            if (!command.getBundlePath().toFile().getName().endsWith(".aab")) {
+            if (!command.getBundlePath().toFile().getName().endsWith(".aab"))
                 throw CommandExecutionException.builder()
                         .withInternalMessage("Wrong properties: %s must end with '.aab'.", BUNDLE_LOCATION_FLAG)
                         .build();
-            }
-
-            if (!command.getOutputPath().toFile().getName().endsWith(".aab")) {
+            if (!command.getOutputPath().toFile().getName().endsWith(".aab"))
                 throw CommandExecutionException.builder()
                         .withInternalMessage("Wrong properties: %s must end with '.aab'.", OUTPUT_FILE_FLAG)
                         .build();
-            }
-
-            if (commandType == TYPE.DUPLICATE_RES_MERGE || commandType == TYPE.FILTER_FILE) {
+            if (commandType == TYPE.DUPLICATE_RES_MERGE || commandType == TYPE.FILTER_FILE)
                 checkFileDoesNotExist(command.getOutputPath());
-
-            } else if (commandType == TYPE.OBFUSCATE_BUNDLE) {
+            else if (commandType == TYPE.OBFUSCATE_BUNDLE) {
                 checkFileExistsAndReadable(command.getBundlePath());
                 //If a file exists, just delete it instead of throwing exception
-                if (command.getOutputPath().toFile().exists()) {
+                if (command.getOutputPath().toFile().exists())
                     command.getOutputPath().toFile().delete();
-                }
-
                 if (command.getObfuscateBundleBuilder().getMappingPath().isPresent()) {
                     File file = command.getObfuscateBundleBuilder().getMappingPath().get().toFile();
                     checkFileExistsAndReadable(file.toPath());
-                    if (!file.getName().endsWith(".txt")) {
+                    if (!file.getName().endsWith(".txt"))
                         throw CommandExecutionException.builder()
                                 .withInternalMessage("Wrong properties: %s must end with '.txt'.", MAPPING_FLAG)
                                 .build();
-                    }
-
                 }
             } else if (commandType == TYPE.FILTER_STRING) {
                 checkFileExistsAndReadable(command.getStringFilterBuilder().getConfigPath().get());
                 checkFileDoesNotExist(command.getOutputPath());
-
-                if (!command.getStringFilterBuilder().getConfigPath().get().toFile().getName().endsWith(".xml")) {
+                if (!command.getStringFilterBuilder().getConfigPath().get().toFile().getName().endsWith(".xml"))
                     throw CommandExecutionException.builder()
                             .withInternalMessage("Wrong properties: %s must end with '.xml'.", CONFIG_LOCATION_FLAG)
                             .build();
-                }
             }
             if (command.getStoreFile().isPresent()) {
                 JarSigner.checkFlagPresent(command.getKeyAlias(), KEY_ALIAS_FLAG);

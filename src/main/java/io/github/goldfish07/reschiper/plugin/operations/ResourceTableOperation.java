@@ -65,12 +65,12 @@ public class ResourceTableOperation {
      * @throws IllegalArgumentException if duplicate configurations are found.
      */
     public static void checkConfiguration(Resources.@NotNull Entry entry) {
-        if (entry.getConfigValueCount() == 0) return;
+        if (entry.getConfigValueCount() == 0)
+            return;
         Set<Resources.ConfigValue> configValues = new HashSet<>();
         for (Resources.ConfigValue configValue : entry.getConfigValueList()) {
-            if (configValues.contains(configValue)) {
+            if (configValues.contains(configValue))
                 throw new IllegalArgumentException("Duplicate configuration for entry: " + entry.getName());
-            }
             configValues.add(configValue);
         }
     }

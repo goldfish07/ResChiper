@@ -23,7 +23,6 @@ public class ResourceMapping {
     private final Map<String, String> dirMapping = new HashMap<>();
     private final Map<String, String> resourceMapping = new HashMap<>();
     private final Map<String, String> entryFilesMapping = new HashMap<>();
-
     private final Map<String, String> resourceNameToIdMapping = new HashMap<>();
     private final Map<String, String> resourcePathToIdMapping = new HashMap<>();
 
@@ -90,9 +89,8 @@ public class ResourceMapping {
      * @throws IllegalArgumentException if the obfuscateResource already exists in the mapping.
      */
     public void putResourceMapping(String rawResource, String obfuscateResource) {
-        if (resourceMapping.containsValue(obfuscateResource)) {
+        if (resourceMapping.containsValue(obfuscateResource))
             throw new IllegalArgumentException(String.format("Multiple entries: %s -> %s", rawResource, obfuscateResource));
-        }
         resourceMapping.put(rawResource, obfuscateResource);
     }
 
@@ -115,7 +113,8 @@ public class ResourceMapping {
         return dirMapping.values().stream()
                 .map(value -> {
                     String[] values = value.split("/");
-                    if (value.isEmpty()) return value;
+                    if (value.isEmpty())
+                        return value;
                     return values[values.length - 1];
                 })
                 .collect(Collectors.toList());
@@ -149,38 +148,32 @@ public class ResourceMapping {
      */
     public void writeMappingToFile(@NotNull Path mappingPath) throws IOException {
         Writer writer = new BufferedWriter(new FileWriter(mappingPath.toFile(), false));
-
         // Write resource directory mapping
         writer.write("res dir mapping:\n");
-        for (Map.Entry<String, String> entry : dirMapping.entrySet()) {
+        for (Map.Entry<String, String> entry : dirMapping.entrySet())
             writer.write(String.format("\t%s -> %s\n", entry.getKey(), entry.getValue()));
-        }
         writer.write("\n\n");
         writer.flush();
-
         // Write resource ID mapping
         writer.write("res id mapping:\n");
-        for (Map.Entry<String, String> entry : resourceMapping.entrySet()) {
+        for (Map.Entry<String, String> entry : resourceMapping.entrySet())
             writer.write(String.format(
                     "\t%s : %s -> %s\n",
                     resourceNameToIdMapping.get(entry.getKey()),
                     entry.getKey(),
                     entry.getValue()
             ));
-        }
         writer.write("\n\n");
         writer.flush();
-
         // Write resource entries path mapping
         writer.write("res entries path mapping:\n");
-        for (Map.Entry<String, String> entry : entryFilesMapping.entrySet()) {
+        for (Map.Entry<String, String> entry : entryFilesMapping.entrySet())
             writer.write(String.format(
                     "\t%s : %s -> %s\n",
                     resourcePathToIdMapping.get(entry.getKey()),
                     entry.getKey(),
                     entry.getValue()
             ));
-        }
         writer.write("\n\n");
         writer.flush();
         writer.close();
