@@ -33,7 +33,7 @@ dependencies {
 
     implementation(gradleApi())
     implementation("org.jetbrains:annotations:24.0.0")
-    implementation("com.android.tools.build:gradle:4.2.2")
+    implementation("com.android.tools.build:gradle:7.0.0")
     implementation("com.android.tools.build:bundletool:1.1.0")
     implementation("org.dom4j:dom4j:2.1.4")
     implementation("com.google.auto.value:auto-value:1.5.4")
