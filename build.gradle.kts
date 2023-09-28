@@ -34,7 +34,7 @@ dependencies {
     implementation(gradleApi())
     implementation("org.jetbrains:annotations:24.0.0")
     implementation("com.android.tools.build:gradle:7.0.0")
-    implementation("com.android.tools.build:bundletool:1.1.0")
+    implementation("com.android.tools.build:bundletool:1.6.0")
     implementation("com.google.guava:guava:32.0.1-jre")
     implementation("io.grpc:grpc-protobuf:1.21.1")
     implementation("com.android.tools.build:aapt2-proto:7.0.0-7396180")
