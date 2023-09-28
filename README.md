@@ -87,7 +87,7 @@ resChiper {
                   
                  //Whitelist rule (file name to exclude)
                  "res/raw/*", // all files inside raw directory will not be obfuscated      
-                 "res/raw/success_tick.json" // success_tick.json file will not be obfuscated
+                 "res/raw/success_tick.json", // success_tick.json file will not be obfuscated
                  "res/xml/*", // all files inside xml directory will not be obfuscated
                   
                  // White list rules (resource name to exclude)
