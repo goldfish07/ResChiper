@@ -32,7 +32,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
 
     implementation(gradleApi())
-    implementation("org.jetbrains:annotations:24.0.0")
+    implementation("org.jetbrains:annotations:24.1.0")
     implementation("com.android.tools.build:gradle:8.0.0")
     implementation("com.android.tools.build:bundletool:1.6.0")
     implementation("com.google.guava:guava:32.0.1-jre")
