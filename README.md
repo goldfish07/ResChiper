@@ -6,7 +6,7 @@
 </h1>
 
 [![License](https://img.shields.io/badge/license-Apache_2.0-maroon)](LICENSE)
-![Android Gradle Plugin](https://img.shields.io/badge/Dependency-AGP/7.0.0-4CAF50)
+![Android Gradle Plugin](https://img.shields.io/badge/Dependency-AGP/8.0.0-4CAF50)
 [![BundleTool](https://img.shields.io/badge/Dependency-Bundletool/1.6.0-red)](https://github.com/google/bundletool)
 ![JDK Version](https://img.shields.io/badge/JDK-17-blue)
 ![Gradle Version](https://img.shields.io/badge/Gradle-8.0-darkgreen)

@@ -6,6 +6,6 @@ package io.github.goldfish07.reschiper.plugin;
 public class ResChiper {
     public static final String VERSION = "0.1.0-rc3";
     public static final String BT_VERSION = "1.6.0";
-    public static final String AGP_VERSION = "7.0.0";
+    public static final String AGP_VERSION = "8.0.0";
     public static final String GRADLE_WRAPPER_VERSION = "8.0";
 }
