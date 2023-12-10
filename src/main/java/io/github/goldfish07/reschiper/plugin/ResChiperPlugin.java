@@ -72,7 +72,7 @@ public class ResChiperPlugin implements Plugin<Project> {
      */
     private void printResChiperBuildConfiguration() {
         System.out.println("----------------------------------------");
-        System.out.println(" ResChiper Build Configuration:");
+        System.out.println(" ResChiper Plugin Configuration:");
         System.out.println("----------------------------------------");
         System.out.println("- ResChiper version:\t" + ResChiper.VERSION);
         System.out.println("- BundleTool version:\t" + ResChiper.BT_VERSION);
