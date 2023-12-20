@@ -130,11 +130,11 @@ resChiper {
     enableFileFiltering = true
     enableFilterStrings = true
     fileFilterList = [ // file filter rules
-                       "META-INF/*",
-                       "*/armeabi-v7a/*",
-                       "*/arm64-v8a/*",
-                       "*/x86/*",
-                       "*/x86_64/*"
+                         "META-INF/*",
+//                       "*/armeabi-v7a/*",
+//                       "*/arm64-v8a/*",
+//                       "*/x86/*",
+//                       "*/x86_64/*"
     ]
     unusedStringFile = "path/to/your/unused_strings.txt" // strings will be filtered in this file
     localeWhiteList = ["en", "in", "fr"] //keep en,en-xx,in,in-xx,fr,fr-xx and remove others locale.
