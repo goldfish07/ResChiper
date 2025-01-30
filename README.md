@@ -6,10 +6,10 @@
 </h1>
 
 [![License](https://img.shields.io/badge/license-Apache_2.0-maroon)](LICENSE)
-![Android Gradle Plugin](https://img.shields.io/badge/Dependency-AGP/8.5.0-4CAF50)
-[![BundleTool](https://img.shields.io/badge/Dependency-Bundletool/1.16.0-red)](https://github.com/google/bundletool)
+![Android Gradle Plugin](https://img.shields.io/badge/Dependency-AGP/8.8.0-4CAF50)
+[![BundleTool](https://img.shields.io/badge/Dependency-Bundletool/1.17.2-red)](https://github.com/google/bundletool)
 ![JDK Version](https://img.shields.io/badge/JDK-17-blue)
-![Gradle Version](https://img.shields.io/badge/Gradle_Wrapper-8.5-darkgreen)
+![Gradle Version](https://img.shields.io/badge/Gradle_Wrapper-8.8-darkgreen)
 [![ResChiper Version](https://img.shields.io/badge/release-0.1.0--rc5-%23C6782A.svg?style=flat)](https://github.com/goldfish07/ResChiper/releases/tag/0.1.0-rc5)
 
 ## Table of Contents
