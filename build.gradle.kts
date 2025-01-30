@@ -37,7 +37,7 @@ dependencies {
     implementation("com.android.tools.build:bundletool:1.17.2")
     implementation("com.google.guava:guava:32.1.3-jre")
     implementation("io.grpc:grpc-protobuf:1.59.1")
-    implementation("com.android.tools.build:aapt2-proto:8.5.0-11315950")
+    implementation("com.android.tools.build:aapt2-proto:8.8.0-12006047")
     implementation("commons-codec:commons-codec:1.16.0")
     implementation("commons-io:commons-io:2.15.1")
     implementation("org.dom4j:dom4j:2.1.4")
