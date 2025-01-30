@@ -57,7 +57,7 @@ public class ResChiperTask extends DefaultTask {
      * @throws Exception If an error occurs during execution.
      */
     @TaskAction
-    private void execute() throws Exception {
+    public void execute() throws Exception {
         logger.log(Level.INFO, resChiperExtension.toString());
         keyStore = SigningConfig.getSigningConfig(variant);
         printSignConfiguration();
