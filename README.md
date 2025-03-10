@@ -138,6 +138,8 @@ resChiper {
     ]
     unusedStringFile = "path/to/your/unused_strings.txt" // strings will be filtered in this file
     localeWhiteList = ["en", "in", "fr"] //keep en,en-xx,in,in-xx,fr,fr-xx and remove others locale.
+    buildUniversalApk = false // Build a universal APK from the obfuscated bundle
+    universalApkName = "universal.apk" // The name for the built universal APK, must end with '.apk'
 }
 ```
 

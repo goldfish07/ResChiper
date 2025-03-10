@@ -1,7 +1,12 @@
 package io.github.goldfish07.reschiper.plugin.command;
 
+import com.android.sdklib.BuildToolInfo;
+import com.android.tools.build.bundletool.androidtools.Aapt2Command;
+import com.android.tools.build.bundletool.commands.BuildApksCommand;
 import com.android.tools.build.bundletool.flags.Flag;
 import com.android.tools.build.bundletool.model.AppBundle;
+import com.android.tools.build.bundletool.model.Password;
+import com.android.tools.build.bundletool.model.SigningConfiguration;
 import com.android.tools.build.bundletool.model.exceptions.CommandExecutionException;
 import com.google.auto.value.AutoValue;
 import io.github.goldfish07.reschiper.plugin.android.JarSigner;
@@ -11,6 +16,7 @@ import io.github.goldfish07.reschiper.plugin.bundle.AppBundleSigner;
 import io.github.goldfish07.reschiper.plugin.command.extensions.BundleFileFilter;
 import io.github.goldfish07.reschiper.plugin.command.extensions.BundleStringFilter;
 import io.github.goldfish07.reschiper.plugin.command.extensions.DuplicateResourceMerger;
+import io.github.goldfish07.reschiper.plugin.command.extensions.UniversalApkPackager;
 import io.github.goldfish07.reschiper.plugin.command.model.DuplicateResMergerCommand;
 import io.github.goldfish07.reschiper.plugin.command.model.FileFilterCommand;
 import io.github.goldfish07.reschiper.plugin.command.model.ObfuscateBundleCommand;
@@ -24,11 +30,16 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import static com.android.tools.build.bundletool.model.utils.files.FilePreconditions.checkFileDoesNotExist;
 import static com.android.tools.build.bundletool.model.utils.files.FilePreconditions.checkFileExistsAndReadable;
@@ -173,6 +184,15 @@ public abstract class Command {
                 signer.execute();
             }
 
+            // package universal apk
+            if (getBuildUniversalApk().isPresent() && getBuildUniversalApk().get() && getStoreFile().isPresent()
+                    && getKeyAlias().isPresent() && getStorePassword().isPresent() && getKeyPassword().isPresent()) {
+                UniversalApkPackager apkPackager = new UniversalApkPackager(
+                        getUniversalApkPath(), getBuildToolInfo(), getOutputPath(), getStoreFile().get(),
+                        getKeyAlias().get(), getStorePassword().get(), getKeyPassword().get());
+                apkPackager.packageApk();
+            }
+
             out = """
                     ----------------------------------------
                      Bundle Summary:
@@ -272,6 +292,13 @@ public abstract class Command {
     public abstract Path getBundlePath();
 
     /**
+     * Gets the path of the universal APK to be processed.
+     *
+     * @return The path of the universal APK.
+     */
+    public abstract Path getUniversalApkPath();
+
+    /**
      * Gets the path where the output bundle file should be created.
      *
      * @return The path for the output bundle file.
@@ -335,6 +362,20 @@ public abstract class Command {
     public abstract DuplicateResMergerCommand getDuplicateResMergeBuilder();
 
     /**
+     * Gets the builder for building the universal APK configuration.
+     *
+     * @return The builder for building the universal APK configuration.
+     */
+    public abstract Optional<Boolean> getBuildUniversalApk();
+
+    /**
+     * Gets the build tool info used for building the universal APK.
+     *
+     * @return The build tool info used for building the universal APK.
+     */
+    public abstract BuildToolInfo getBuildToolInfo();
+
+    /**
      * A builder class for constructing {@link Command} objects with various configuration options.
      * The builder allows setting properties related to processing Android App Bundles, including
      * filtering files, filtering strings, obfuscating resources, and merging duplicated resources.
@@ -351,6 +392,14 @@ public abstract class Command {
          * @return This builder for method chaining.
          */
         public abstract Builder setBundlePath(Path bundlePath);
+
+        /**
+         * Sets the path of the universal APK to be processed.
+         *
+         * @param universalApkPath The path of the universal APK.
+         * @return This builder for method chaining.
+         */
+        public abstract Builder setUniversalApkPath(Path universalApkPath);
 
         /**
          * Sets the path where the output bundle file should be created.
@@ -423,6 +472,22 @@ public abstract class Command {
          * @return This builder for method chaining.
          */
         public abstract Builder setDuplicateResMergeBuilder(DuplicateResMergerCommand mergerCommand);
+
+        /**
+         * Set the flag indicating whether building the universal APK is enabled.
+         *
+         * @param buildUniversalApk A boolean flag indicating whether building the universal APK is enabled.
+         * @return This builder instance for method chaining.
+         */
+        public abstract Builder setBuildUniversalApk(Boolean buildUniversalApk);
+
+        /**
+         * Sets the build tool info used for building the universal APK.
+         *
+         * @param aapt2Path The build tool info used for building the universal APK.
+         * @return This builder instance for method chaining.
+         */
+        public abstract Builder setBuildToolInfo(BuildToolInfo aapt2Path);
 
         /**
          * Builds and returns a {@link Command} object with the specified properties.

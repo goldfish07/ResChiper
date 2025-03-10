@@ -19,6 +19,8 @@ public class Extension {
     private Set<String> fileFilterList = new HashSet<>();
     private Set<String> whiteList = new HashSet<>();
     private Set<String> localeWhiteList = new HashSet<>();
+    private boolean buildUniversalApk = false;
+    private String universalApkName = "universal.apk";
 
     /**
      * Gets whether obfuscation is enabled.
@@ -138,12 +140,30 @@ public class Extension {
     }
 
     /**
+     * Gets the name of the universal APK file.
+     *
+     * @return The name of the universal APK file.
+     */
+    public String getUniversalApkName() {
+        return universalApkName;
+    }
+
+    /**
      * Sets the name of the obfuscated bundle file.
      *
      * @param obfuscatedBundleName The name of the obfuscated bundle file.
      */
     public void setObfuscatedBundleName(String obfuscatedBundleName) {
         this.obfuscatedBundleName = obfuscatedBundleName;
+    }
+
+    /**
+     * Sets the name of the universal APK file.
+     *
+     * @param universalApkName The name of the universal APK file.
+     */
+    public void setUniversalApkName(String universalApkName) {
+        this.universalApkName = universalApkName;
     }
 
     /**
@@ -216,6 +236,24 @@ public class Extension {
      */
     public void setWhiteList(Set<String> whiteList) {
         this.whiteList = whiteList;
+    }
+
+    /**
+     * Sets whether the universal APK should be built.
+     *
+     * @param buildUniversalApk {@code true} to enable building a universal APK; {@code false} to disable it.
+     */
+    public void setBuildUniversalApk(boolean buildUniversalApk) {
+        this.buildUniversalApk = buildUniversalApk;
+    }
+
+    /**
+     * Gets whether the universal APK should be build.
+     *
+     * @return {@code true} if a universal APK should be built; otherwise, {@code false}.
+     */
+    public boolean getBuildUniversalApk() {
+        return buildUniversalApk;
     }
 
     /**
