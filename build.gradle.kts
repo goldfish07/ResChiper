@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "io.github.goldfish07.reschiper"
-version = "0.1.0-rc6"
+version = "0.1.0-rc7-dev"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
