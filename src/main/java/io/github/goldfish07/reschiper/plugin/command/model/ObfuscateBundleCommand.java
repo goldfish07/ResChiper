@@ -103,6 +103,13 @@ public abstract class ObfuscateBundleCommand {
     public abstract Optional<Set<String>> getLanguageWhiteList();
 
     /**
+     * Get an optional obfuscation seed string for obfuscation.
+     *
+     * @return An optional obfuscation seed string.
+     */
+    public abstract Optional<String> getObfuscationSeed();
+
+    /**
      * Builder pattern for constructing {@link ObfuscateBundleCommand} instances.
      */
     @AutoValue.Builder
@@ -195,6 +202,14 @@ public abstract class ObfuscateBundleCommand {
          * @return This builder instance for method chaining.
          */
         public abstract Builder setDisableSign(Boolean disableSign);
+
+        /**
+         * Set the obfuscation seed string for obfuscation.
+         *
+         * @param obfuscationSeed The obfuscation seed string to set.
+         * @return This builder instance for method chaining.
+         */
+        public abstract Builder setObfuscationSeed(String obfuscationSeed);
 
         /**
          * Build a new {@link ObfuscateBundleCommand} instance with the configured properties.

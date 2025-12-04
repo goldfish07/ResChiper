@@ -16,6 +16,7 @@ public class Extension {
     private Path mappingFile = null;
     private String obfuscatedBundleName;
     private String unusedStringFile = "";
+    private String obfuscationSeed = null;
     private Set<String> fileFilterList = new HashSet<>();
     private Set<String> whiteList = new HashSet<>();
     private Set<String> localeWhiteList = new HashSet<>();
@@ -216,6 +217,24 @@ public class Extension {
      */
     public void setWhiteList(Set<String> whiteList) {
         this.whiteList = whiteList;
+    }
+
+    /**
+     * Gets the obfuscation seed string used for obfuscation.
+     *
+     * @return The obfuscation seed string, or {@code null} if not set.
+     */
+    public String getObfuscationSeed() {
+        return obfuscationSeed;
+    }
+
+    /**
+     * Sets the obfuscation seed string used for obfuscation.
+     *
+     * @param obfuscationSeed The obfuscation seed string to set, or {@code null} to disable seed-based obfuscation.
+     */
+    public void setObfuscationSeed(String obfuscationSeed) {
+        this.obfuscationSeed = obfuscationSeed;
     }
 
     /**

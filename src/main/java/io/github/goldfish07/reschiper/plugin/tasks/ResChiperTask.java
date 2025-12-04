@@ -79,6 +79,8 @@ public class ResChiperTask extends DefaultTask {
                 .setLanguageWhiteList(resChiperExtension.getLocaleWhiteList());
         if (resChiperExtension.getMappingFile() != null)
             obfuscateBuilder.setMappingPath(resChiperExtension.getMappingFile());
+        if (resChiperExtension.getObfuscationSeed() != null)
+            obfuscateBuilder.setObfuscationSeed(resChiperExtension.getObfuscationSeed());
 
         if (keyStore.storeFile() != null && keyStore.storeFile().exists())
             builder.setStoreFile(keyStore.storeFile().toPath())

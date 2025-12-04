@@ -40,6 +40,7 @@ public class ResourcesObfuscator {
     private final Path outputMappingPath;
     private final ZipFile bundleZipFile;
     private final ResourceMapping resourceMapping;
+    private final String obfuscationSeed;
 
     public enum MODE {
         DIR,
@@ -63,9 +64,10 @@ public class ResourcesObfuscator {
      * @param whiteListRules       The set of whitelisting rules for resources.
      * @param outputLogLocationDir The directory where log files will be generated.
      * @param mappingPath          The path to the resource mapping file (can be null).
+     * @param obfuscationSeed      The obfuscation seed string for obfuscation (can be null).
      * @throws IOException If an I/O error occurs during initialization.
      */
-    public ResourcesObfuscator(Path bundlePath, AppBundle rawAppBundle, Set<String> whiteListRules, Path outputLogLocationDir, Path mappingPath) throws IOException {
+    public ResourcesObfuscator(Path bundlePath, AppBundle rawAppBundle, Set<String> whiteListRules, Path outputLogLocationDir, Path mappingPath, String obfuscationSeed) throws IOException {
         if (mappingPath != null && mappingPath.toFile().exists())
             resourceMapping = new ResourcesMappingParser(mappingPath).parse();
         else
@@ -81,6 +83,7 @@ public class ResourcesObfuscator {
 
         this.rawAppBundle = rawAppBundle;
         this.whiteListRules = whiteListRules;
+        this.obfuscationSeed = obfuscationSeed;
     }
 
     MODE mode;
@@ -177,7 +180,7 @@ public class ResourcesObfuscator {
                 .filter(path -> !resourceMapping.getDirMapping().containsKey(path.toString()))
                 .forEach(path -> {
                     stringObfuscator.reset(null);
-                    String name = stringObfuscator.getReplaceString(resourceMapping.getPathMappingNameList());
+                    String name = stringObfuscator.getReplaceString(resourceMapping.getPathMappingNameList(), obfuscationSeed);
                     if (mode == MODE.FILES || isDirectoryInWhiteList(path.toString())) {
                         if (isDirectoryInWhiteList(path.toString()))
                             System.out.println(" - [whitelist][dir] " + path);
@@ -206,7 +209,7 @@ public class ResourcesObfuscator {
                 if (isResourceInWhiteList(resourceName))
                     System.out.printf(" - [whitelist][resource] %s, id: %s%n", resourceName, resourceId);
                 else {
-                    String name = stringObfuscator.getReplaceString(obfuscationList);
+                    String name = stringObfuscator.getReplaceString(obfuscationList, obfuscationSeed);
                     obfuscationList.add(name);
                     String obfuscatedResourceName = AppBundleUtils.getResourceFullName(entry.getPackage().getPackageName(), entry.getType().getName(), name);
                     resourceMapping.putResourceMapping(resourceName, obfuscatedResourceName);
@@ -254,7 +257,7 @@ public class ResourcesObfuscator {
                             } else {
                                 if ((mode == MODE.FILES || mode == MODE.DEFAULT)) {
                                     fileSuffix = FileOperation.getFileSuffix(entry.getPath());
-                                    obfuscatedName = guardStringBuilder.getReplaceString(mapping);
+                                    obfuscatedName = guardStringBuilder.getReplaceString(mapping, obfuscationSeed);
                                 } else {
                                     fileSuffix = "";
                                     obfuscatedName = FileOperation.getFileSimpleName(entry.getPath());
