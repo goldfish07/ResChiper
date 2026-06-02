@@ -1,3 +1,35 @@
+
+<div align="right">
+  <details>
+    <summary >🌐 Language</summary>
+    <div>
+      <div align="center">
+        <a href="https://openaitx.github.io/view.html?user=goldfish07&project=ResChiper&lang=en">English</a>
+        | <a href="https://openaitx.github.io/view.html?user=goldfish07&project=ResChiper&lang=zh-CN">简体中文</a>
+        | <a href="https://openaitx.github.io/view.html?user=goldfish07&project=ResChiper&lang=zh-TW">繁體中文</a>
+        | <a href="https://openaitx.github.io/view.html?user=goldfish07&project=ResChiper&lang=ja">日本語</a>
+        | <a href="https://openaitx.github.io/view.html?user=goldfish07&project=ResChiper&lang=ko">한국어</a>
+        | <a href="https://openaitx.github.io/view.html?user=goldfish07&project=ResChiper&lang=hi">हिन्दी</a>
+        | <a href="https://openaitx.github.io/view.html?user=goldfish07&project=ResChiper&lang=th">ไทย</a>
+        | <a href="https://openaitx.github.io/view.html?user=goldfish07&project=ResChiper&lang=fr">Français</a>
+        | <a href="https://openaitx.github.io/view.html?user=goldfish07&project=ResChiper&lang=de">Deutsch</a>
+        | <a href="https://openaitx.github.io/view.html?user=goldfish07&project=ResChiper&lang=es">Español</a>
+        | <a href="https://openaitx.github.io/view.html?user=goldfish07&project=ResChiper&lang=it">Italiano</a>
+        | <a href="https://openaitx.github.io/view.html?user=goldfish07&project=ResChiper&lang=ru">Русский</a>
+        | <a href="https://openaitx.github.io/view.html?user=goldfish07&project=ResChiper&lang=pt">Português</a>
+        | <a href="https://openaitx.github.io/view.html?user=goldfish07&project=ResChiper&lang=nl">Nederlands</a>
+        | <a href="https://openaitx.github.io/view.html?user=goldfish07&project=ResChiper&lang=pl">Polski</a>
+        | <a href="https://openaitx.github.io/view.html?user=goldfish07&project=ResChiper&lang=ar">العربية</a>
+        | <a href="https://openaitx.github.io/view.html?user=goldfish07&project=ResChiper&lang=fa">فارسی</a>
+        | <a href="https://openaitx.github.io/view.html?user=goldfish07&project=ResChiper&lang=tr">Türkçe</a>
+        | <a href="https://openaitx.github.io/view.html?user=goldfish07&project=ResChiper&lang=vi">Tiếng Việt</a>
+        | <a href="https://openaitx.github.io/view.html?user=goldfish07&project=ResChiper&lang=id">Bahasa Indonesia</a>
+        | <a href="https://openaitx.github.io/view.html?user=goldfish07&project=ResChiper&lang=as">অসমীয়া</
+      </div>
+    </div>
+  </details>
+</div>
+
 # ResChiper
 
 <h1 align="center">
