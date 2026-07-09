@@ -155,7 +155,8 @@ public abstract class Command {
                 Path mappingPath = null;
                 if (bundleCommand.getMappingPath().isPresent())
                     mappingPath = bundleCommand.getMappingPath().get();
-                ResourcesObfuscator obfuscator = new ResourcesObfuscator(getBundlePath(), appBundle, bundleCommand.getWhiteList(), getOutputPath().getParent(), mappingPath);
+                String obfuscationSeed = bundleCommand.getObfuscationSeed().orElse(null);
+                ResourcesObfuscator obfuscator = new ResourcesObfuscator(getBundlePath(), appBundle, bundleCommand.getWhiteList(), getOutputPath().getParent(), mappingPath, obfuscationSeed);
                 obfuscator.withMode(obfuscator.getMode(bundleCommand.getObfuscationMode() == null ? "default" : bundleCommand.getObfuscationMode()));
                 appBundle = obfuscator.obfuscate();
             }

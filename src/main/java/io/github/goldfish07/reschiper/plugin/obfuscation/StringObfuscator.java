@@ -114,15 +114,58 @@ public class StringObfuscator {
     }
 
     /**
+     * Generates a hash-based string that starts with a letter.
+     *
+     * @param input The input string to hash.
+     * @return A hash string that starts with a letter.
+     */
+    private String getHashStartingWithLetter(String input) {
+        int hash = input.hashCode();
+        String hashStr = Integer.toHexString(Math.abs(hash));
+
+        // Ensure the hash starts with a letter
+        if (Character.isDigit(hashStr.charAt(0))) {
+            // Map digits to letters: 0->a, 1->b, 2->c, 3->d, 4->e, 5->f, 6->g, 7->h, 8->i, 9->j
+            char firstChar = (char) ('a' + (hashStr.charAt(0) - '0'));
+            hashStr = firstChar + hashStr.substring(1);
+        }
+
+        return hashStr;
+    }
+
+    /**
      * Gets a replacement string from the buffer based on the provided names.
      *
      * @param names A collection of names to exclude from the replacements.
+     * @param obfuscationSeed An optional obfuscation seed string for obfuscation. If provided, uses seed-based hashing logic.
      * @return The replacement string.
      * @throws IllegalArgumentException If the replacement buffer is empty.
      */
-    public String getReplaceString(Collection<String> names) throws IllegalArgumentException {
+    public String getReplaceString(Collection<String> names, String obfuscationSeed) throws IllegalArgumentException {
         if (replaceStringBuffer.isEmpty())
             throw new IllegalArgumentException("Now can only obfuscate up to " + MAX_OBFUSCATION_LIMIT + " in a single type");
+
+        // If obfuscationSeed is provided, use seed-based hashing logic
+        if (obfuscationSeed != null && !obfuscationSeed.isEmpty()) {
+            String result;
+            if (names != null) {
+                for (int i = 0; i < replaceStringBuffer.size(); i++) {
+                    result = replaceStringBuffer.get(i);
+                    String nameWithHash = getHashStartingWithLetter(result + obfuscationSeed);
+
+                    if (names.contains(nameWithHash)) {
+                        continue;
+                    }
+
+                    replaceStringBuffer.remove(i);
+                    return nameWithHash;
+                }
+            }
+            result = replaceStringBuffer.remove(0);
+            return getHashStartingWithLetter(result + obfuscationSeed);
+        }
+
+        // Original logic when obfuscationSeed is not provided
         if (names != null)
             for (int i = 0; i < replaceStringBuffer.size(); i++) {
                 String name = replaceStringBuffer.get(i);
